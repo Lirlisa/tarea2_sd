@@ -1,0 +1,10 @@
+syntax = "proto3";
+package ClienteName;
+
+message Message {
+  string body = 1;
+}
+
+service NameService {
+  rpc SolicitudCliente(Message) returns (Message) {}
+}
