@@ -1,0 +1,24 @@
+syntax="proto3";
+
+package com_datanode;
+
+option go_package = ".;com_datanode";
+
+message Disponibilidad{
+    bool Estado = 1;
+}
+
+message Chunk{
+    bytes Data = 1;
+}
+
+message EstadoSubida{
+    bool Estado = 1;
+}
+message Empty{
+}
+
+service Interacciones {
+    rpc Disponible (Empty) returns (Disponibilidad);
+    rpc SubirArchivo (stream Chunk) returns (EstadoSubida);
+}

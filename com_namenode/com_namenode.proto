@@ -1,0 +1,29 @@
+syntax="proto3";
+
+package com_namenode;
+
+option go_package = ".;com_namenode";
+
+message Chunk{
+    bytes Data = 1;
+    int32 NChunk = 2;
+
+}
+
+message EstadoCarga{
+    bool estado = 1;
+}
+
+message AceptarLibro{
+    bool Aceptacion = 1;
+}
+
+message LibroMetadata{
+    string Nombre = 1;
+    int32 TotalChunks = 2;
+}
+
+service Interacciones{
+    rpc EscribirLog (LibroMetadata) returns (AceptarLibro);
+    rpc Upload (stream Chunk) returns (EstadoCarga);
+}
