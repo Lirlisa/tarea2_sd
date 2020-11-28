@@ -13,7 +13,7 @@ type ServerNamenode struct {
 func (c *ServerNamenode) EscribirLog(ctx context.Context, in *Log) (*EstadoEscritura, error) {
 	f, err := os.OpenFile("log.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 	if err != nil {
-		log.Fatalf(err)
+		log.Fatalf("error: ", err.Error())
 	}
 	defer f.Close()
 
@@ -22,8 +22,7 @@ func (c *ServerNamenode) EscribirLog(ctx context.Context, in *Log) (*EstadoEscri
 			Estado: false,
 			Msg:    err.Error(),
 		}, nil
-	}
-	else {
+	} else {
 		return &EstadoEscritura{
 			Estado: true,
 			Msg:    "",
