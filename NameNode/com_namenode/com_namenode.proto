@@ -1,0 +1,18 @@
+syntax="proto3";
+
+package com_namenode;
+
+option go_package = ".;com_namenode";
+
+message Log{
+    string Texto = 1;
+}
+
+message EstadoEscritura {
+    bool Estado = 1;
+    string Msg = 2;
+}
+
+service Interacciones {
+    rpc EscribirLog (Log) returns (EstadoEscritura);
+}

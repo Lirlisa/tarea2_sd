@@ -5,7 +5,7 @@ import (
 	"log"
 	"net"
 
-	"./ClienteName"
+	"./com_namenode"
 	"google.golang.org/grpc"
 )
 
@@ -23,11 +23,11 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	s := ClienteName.Server{}
+	s := com_namenode.Server{}
 
 	grpcServer := grpc.NewServer()
 
-	ClienteName.RegisterNameServiceServer(grpcServer, &s)
+	com_namenode.RegisterInteraccionesServer(grpcServer, &s)
 
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %s", err)
