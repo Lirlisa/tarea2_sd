@@ -29,17 +29,16 @@ const (
 // of the legacy proto package is being used.
 const _ = proto.ProtoPackageIsVersion4
 
-type Chunk struct {
+type Log struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Data   []byte `protobuf:"bytes,1,opt,name=Data,proto3" json:"Data,omitempty"`
-	NChunk int32  `protobuf:"varint,2,opt,name=NChunk,proto3" json:"NChunk,omitempty"`
+	Texto string `protobuf:"bytes,1,opt,name=Texto,proto3" json:"Texto,omitempty"`
 }
 
-func (x *Chunk) Reset() {
-	*x = Chunk{}
+func (x *Log) Reset() {
+	*x = Log{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_com_namenode_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -47,13 +46,13 @@ func (x *Chunk) Reset() {
 	}
 }
 
-func (x *Chunk) String() string {
+func (x *Log) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Chunk) ProtoMessage() {}
+func (*Log) ProtoMessage() {}
 
-func (x *Chunk) ProtoReflect() protoreflect.Message {
+func (x *Log) ProtoReflect() protoreflect.Message {
 	mi := &file_com_namenode_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -65,35 +64,29 @@ func (x *Chunk) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Chunk.ProtoReflect.Descriptor instead.
-func (*Chunk) Descriptor() ([]byte, []int) {
+// Deprecated: Use Log.ProtoReflect.Descriptor instead.
+func (*Log) Descriptor() ([]byte, []int) {
 	return file_com_namenode_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Chunk) GetData() []byte {
+func (x *Log) GetTexto() string {
 	if x != nil {
-		return x.Data
+		return x.Texto
 	}
-	return nil
+	return ""
 }
 
-func (x *Chunk) GetNChunk() int32 {
-	if x != nil {
-		return x.NChunk
-	}
-	return 0
-}
-
-type EstadoCarga struct {
+type EstadoEscritura struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Estado bool `protobuf:"varint,1,opt,name=estado,proto3" json:"estado,omitempty"`
+	Estado bool   `protobuf:"varint,1,opt,name=Estado,proto3" json:"Estado,omitempty"`
+	Msg    string `protobuf:"bytes,2,opt,name=Msg,proto3" json:"Msg,omitempty"`
 }
 
-func (x *EstadoCarga) Reset() {
-	*x = EstadoCarga{}
+func (x *EstadoEscritura) Reset() {
+	*x = EstadoEscritura{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_com_namenode_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -101,13 +94,13 @@ func (x *EstadoCarga) Reset() {
 	}
 }
 
-func (x *EstadoCarga) String() string {
+func (x *EstadoEscritura) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*EstadoCarga) ProtoMessage() {}
+func (*EstadoEscritura) ProtoMessage() {}
 
-func (x *EstadoCarga) ProtoReflect() protoreflect.Message {
+func (x *EstadoEscritura) ProtoReflect() protoreflect.Message {
 	mi := &file_com_namenode_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -119,118 +112,23 @@ func (x *EstadoCarga) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use EstadoCarga.ProtoReflect.Descriptor instead.
-func (*EstadoCarga) Descriptor() ([]byte, []int) {
+// Deprecated: Use EstadoEscritura.ProtoReflect.Descriptor instead.
+func (*EstadoEscritura) Descriptor() ([]byte, []int) {
 	return file_com_namenode_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *EstadoCarga) GetEstado() bool {
+func (x *EstadoEscritura) GetEstado() bool {
 	if x != nil {
 		return x.Estado
 	}
 	return false
 }
 
-type AceptarLibro struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Aceptacion bool `protobuf:"varint,1,opt,name=Aceptacion,proto3" json:"Aceptacion,omitempty"`
-}
-
-func (x *AceptarLibro) Reset() {
-	*x = AceptarLibro{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_com_namenode_proto_msgTypes[2]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *AceptarLibro) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*AceptarLibro) ProtoMessage() {}
-
-func (x *AceptarLibro) ProtoReflect() protoreflect.Message {
-	mi := &file_com_namenode_proto_msgTypes[2]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use AceptarLibro.ProtoReflect.Descriptor instead.
-func (*AceptarLibro) Descriptor() ([]byte, []int) {
-	return file_com_namenode_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *AceptarLibro) GetAceptacion() bool {
+func (x *EstadoEscritura) GetMsg() string {
 	if x != nil {
-		return x.Aceptacion
-	}
-	return false
-}
-
-type LibroMetadata struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Nombre      string `protobuf:"bytes,1,opt,name=Nombre,proto3" json:"Nombre,omitempty"`
-	TotalChunks int32  `protobuf:"varint,2,opt,name=TotalChunks,proto3" json:"TotalChunks,omitempty"`
-}
-
-func (x *LibroMetadata) Reset() {
-	*x = LibroMetadata{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_com_namenode_proto_msgTypes[3]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *LibroMetadata) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*LibroMetadata) ProtoMessage() {}
-
-func (x *LibroMetadata) ProtoReflect() protoreflect.Message {
-	mi := &file_com_namenode_proto_msgTypes[3]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use LibroMetadata.ProtoReflect.Descriptor instead.
-func (*LibroMetadata) Descriptor() ([]byte, []int) {
-	return file_com_namenode_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *LibroMetadata) GetNombre() string {
-	if x != nil {
-		return x.Nombre
+		return x.Msg
 	}
 	return ""
-}
-
-func (x *LibroMetadata) GetTotalChunks() int32 {
-	if x != nil {
-		return x.TotalChunks
-	}
-	return 0
 }
 
 var File_com_namenode_proto protoreflect.FileDescriptor
@@ -238,31 +136,19 @@ var File_com_namenode_proto protoreflect.FileDescriptor
 var file_com_namenode_proto_rawDesc = []byte{
 	0x0a, 0x12, 0x63, 0x6f, 0x6d, 0x5f, 0x6e, 0x61, 0x6d, 0x65, 0x6e, 0x6f, 0x64, 0x65, 0x2e, 0x70,
 	0x72, 0x6f, 0x74, 0x6f, 0x12, 0x0c, 0x63, 0x6f, 0x6d, 0x5f, 0x6e, 0x61, 0x6d, 0x65, 0x6e, 0x6f,
-	0x64, 0x65, 0x22, 0x33, 0x0a, 0x05, 0x43, 0x68, 0x75, 0x6e, 0x6b, 0x12, 0x12, 0x0a, 0x04, 0x44,
-	0x61, 0x74, 0x61, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x04, 0x44, 0x61, 0x74, 0x61, 0x12,
-	0x16, 0x0a, 0x06, 0x4e, 0x43, 0x68, 0x75, 0x6e, 0x6b, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52,
-	0x06, 0x4e, 0x43, 0x68, 0x75, 0x6e, 0x6b, 0x22, 0x25, 0x0a, 0x0b, 0x45, 0x73, 0x74, 0x61, 0x64,
-	0x6f, 0x43, 0x61, 0x72, 0x67, 0x61, 0x12, 0x16, 0x0a, 0x06, 0x65, 0x73, 0x74, 0x61, 0x64, 0x6f,
-	0x18, 0x01, 0x20, 0x01, 0x28, 0x08, 0x52, 0x06, 0x65, 0x73, 0x74, 0x61, 0x64, 0x6f, 0x22, 0x2e,
-	0x0a, 0x0c, 0x41, 0x63, 0x65, 0x70, 0x74, 0x61, 0x72, 0x4c, 0x69, 0x62, 0x72, 0x6f, 0x12, 0x1e,
-	0x0a, 0x0a, 0x41, 0x63, 0x65, 0x70, 0x74, 0x61, 0x63, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01,
-	0x28, 0x08, 0x52, 0x0a, 0x41, 0x63, 0x65, 0x70, 0x74, 0x61, 0x63, 0x69, 0x6f, 0x6e, 0x22, 0x49,
-	0x0a, 0x0d, 0x4c, 0x69, 0x62, 0x72, 0x6f, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x12,
-	0x16, 0x0a, 0x06, 0x4e, 0x6f, 0x6d, 0x62, 0x72, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
-	0x06, 0x4e, 0x6f, 0x6d, 0x62, 0x72, 0x65, 0x12, 0x20, 0x0a, 0x0b, 0x54, 0x6f, 0x74, 0x61, 0x6c,
-	0x43, 0x68, 0x75, 0x6e, 0x6b, 0x73, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x0b, 0x54, 0x6f,
-	0x74, 0x61, 0x6c, 0x43, 0x68, 0x75, 0x6e, 0x6b, 0x73, 0x32, 0x93, 0x01, 0x0a, 0x0d, 0x49, 0x6e,
-	0x74, 0x65, 0x72, 0x61, 0x63, 0x63, 0x69, 0x6f, 0x6e, 0x65, 0x73, 0x12, 0x46, 0x0a, 0x0b, 0x45,
-	0x73, 0x63, 0x72, 0x69, 0x62, 0x69, 0x72, 0x4c, 0x6f, 0x67, 0x12, 0x1b, 0x2e, 0x63, 0x6f, 0x6d,
-	0x5f, 0x6e, 0x61, 0x6d, 0x65, 0x6e, 0x6f, 0x64, 0x65, 0x2e, 0x4c, 0x69, 0x62, 0x72, 0x6f, 0x4d,
-	0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x1a, 0x1a, 0x2e, 0x63, 0x6f, 0x6d, 0x5f, 0x6e, 0x61,
-	0x6d, 0x65, 0x6e, 0x6f, 0x64, 0x65, 0x2e, 0x41, 0x63, 0x65, 0x70, 0x74, 0x61, 0x72, 0x4c, 0x69,
-	0x62, 0x72, 0x6f, 0x12, 0x3a, 0x0a, 0x06, 0x55, 0x70, 0x6c, 0x6f, 0x61, 0x64, 0x12, 0x13, 0x2e,
-	0x63, 0x6f, 0x6d, 0x5f, 0x6e, 0x61, 0x6d, 0x65, 0x6e, 0x6f, 0x64, 0x65, 0x2e, 0x43, 0x68, 0x75,
-	0x6e, 0x6b, 0x1a, 0x19, 0x2e, 0x63, 0x6f, 0x6d, 0x5f, 0x6e, 0x61, 0x6d, 0x65, 0x6e, 0x6f, 0x64,
-	0x65, 0x2e, 0x45, 0x73, 0x74, 0x61, 0x64, 0x6f, 0x43, 0x61, 0x72, 0x67, 0x61, 0x28, 0x01, 0x42,
-	0x10, 0x5a, 0x0e, 0x2e, 0x3b, 0x63, 0x6f, 0x6d, 0x5f, 0x6e, 0x61, 0x6d, 0x65, 0x6e, 0x6f, 0x64,
-	0x65, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x64, 0x65, 0x22, 0x1b, 0x0a, 0x03, 0x4c, 0x6f, 0x67, 0x12, 0x14, 0x0a, 0x05, 0x54, 0x65, 0x78,
+	0x74, 0x6f, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x54, 0x65, 0x78, 0x74, 0x6f, 0x22,
+	0x3b, 0x0a, 0x0f, 0x45, 0x73, 0x74, 0x61, 0x64, 0x6f, 0x45, 0x73, 0x63, 0x72, 0x69, 0x74, 0x75,
+	0x72, 0x61, 0x12, 0x16, 0x0a, 0x06, 0x45, 0x73, 0x74, 0x61, 0x64, 0x6f, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x08, 0x52, 0x06, 0x45, 0x73, 0x74, 0x61, 0x64, 0x6f, 0x12, 0x10, 0x0a, 0x03, 0x4d, 0x73,
+	0x67, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x4d, 0x73, 0x67, 0x32, 0x50, 0x0a, 0x0d,
+	0x49, 0x6e, 0x74, 0x65, 0x72, 0x61, 0x63, 0x63, 0x69, 0x6f, 0x6e, 0x65, 0x73, 0x12, 0x3f, 0x0a,
+	0x0b, 0x45, 0x73, 0x63, 0x72, 0x69, 0x62, 0x69, 0x72, 0x4c, 0x6f, 0x67, 0x12, 0x11, 0x2e, 0x63,
+	0x6f, 0x6d, 0x5f, 0x6e, 0x61, 0x6d, 0x65, 0x6e, 0x6f, 0x64, 0x65, 0x2e, 0x4c, 0x6f, 0x67, 0x1a,
+	0x1d, 0x2e, 0x63, 0x6f, 0x6d, 0x5f, 0x6e, 0x61, 0x6d, 0x65, 0x6e, 0x6f, 0x64, 0x65, 0x2e, 0x45,
+	0x73, 0x74, 0x61, 0x64, 0x6f, 0x45, 0x73, 0x63, 0x72, 0x69, 0x74, 0x75, 0x72, 0x61, 0x42, 0x10,
+	0x5a, 0x0e, 0x2e, 0x3b, 0x63, 0x6f, 0x6d, 0x5f, 0x6e, 0x61, 0x6d, 0x65, 0x6e, 0x6f, 0x64, 0x65,
+	0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -277,20 +163,16 @@ func file_com_namenode_proto_rawDescGZIP() []byte {
 	return file_com_namenode_proto_rawDescData
 }
 
-var file_com_namenode_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_com_namenode_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_com_namenode_proto_goTypes = []interface{}{
-	(*Chunk)(nil),         // 0: com_namenode.Chunk
-	(*EstadoCarga)(nil),   // 1: com_namenode.EstadoCarga
-	(*AceptarLibro)(nil),  // 2: com_namenode.AceptarLibro
-	(*LibroMetadata)(nil), // 3: com_namenode.LibroMetadata
+	(*Log)(nil),             // 0: com_namenode.Log
+	(*EstadoEscritura)(nil), // 1: com_namenode.EstadoEscritura
 }
 var file_com_namenode_proto_depIdxs = []int32{
-	3, // 0: com_namenode.Interacciones.EscribirLog:input_type -> com_namenode.LibroMetadata
-	0, // 1: com_namenode.Interacciones.Upload:input_type -> com_namenode.Chunk
-	2, // 2: com_namenode.Interacciones.EscribirLog:output_type -> com_namenode.AceptarLibro
-	1, // 3: com_namenode.Interacciones.Upload:output_type -> com_namenode.EstadoCarga
-	2, // [2:4] is the sub-list for method output_type
-	0, // [0:2] is the sub-list for method input_type
+	0, // 0: com_namenode.Interacciones.EscribirLog:input_type -> com_namenode.Log
+	1, // 1: com_namenode.Interacciones.EscribirLog:output_type -> com_namenode.EstadoEscritura
+	1, // [1:2] is the sub-list for method output_type
+	0, // [0:1] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -303,7 +185,7 @@ func file_com_namenode_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_com_namenode_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Chunk); i {
+			switch v := v.(*Log); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -315,31 +197,7 @@ func file_com_namenode_proto_init() {
 			}
 		}
 		file_com_namenode_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*EstadoCarga); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_com_namenode_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*AceptarLibro); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_com_namenode_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*LibroMetadata); i {
+			switch v := v.(*EstadoEscritura); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -357,7 +215,7 @@ func file_com_namenode_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_com_namenode_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
@@ -383,8 +241,7 @@ const _ = grpc.SupportPackageIsVersion6
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type InteraccionesClient interface {
-	EscribirLog(ctx context.Context, in *LibroMetadata, opts ...grpc.CallOption) (*AceptarLibro, error)
-	Upload(ctx context.Context, opts ...grpc.CallOption) (Interacciones_UploadClient, error)
+	EscribirLog(ctx context.Context, in *Log, opts ...grpc.CallOption) (*EstadoEscritura, error)
 }
 
 type interaccionesClient struct {
@@ -395,8 +252,8 @@ func NewInteraccionesClient(cc grpc.ClientConnInterface) InteraccionesClient {
 	return &interaccionesClient{cc}
 }
 
-func (c *interaccionesClient) EscribirLog(ctx context.Context, in *LibroMetadata, opts ...grpc.CallOption) (*AceptarLibro, error) {
-	out := new(AceptarLibro)
+func (c *interaccionesClient) EscribirLog(ctx context.Context, in *Log, opts ...grpc.CallOption) (*EstadoEscritura, error) {
+	out := new(EstadoEscritura)
 	err := c.cc.Invoke(ctx, "/com_namenode.Interacciones/EscribirLog", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -404,55 +261,17 @@ func (c *interaccionesClient) EscribirLog(ctx context.Context, in *LibroMetadata
 	return out, nil
 }
 
-func (c *interaccionesClient) Upload(ctx context.Context, opts ...grpc.CallOption) (Interacciones_UploadClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_Interacciones_serviceDesc.Streams[0], "/com_namenode.Interacciones/Upload", opts...)
-	if err != nil {
-		return nil, err
-	}
-	x := &interaccionesUploadClient{stream}
-	return x, nil
-}
-
-type Interacciones_UploadClient interface {
-	Send(*Chunk) error
-	CloseAndRecv() (*EstadoCarga, error)
-	grpc.ClientStream
-}
-
-type interaccionesUploadClient struct {
-	grpc.ClientStream
-}
-
-func (x *interaccionesUploadClient) Send(m *Chunk) error {
-	return x.ClientStream.SendMsg(m)
-}
-
-func (x *interaccionesUploadClient) CloseAndRecv() (*EstadoCarga, error) {
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	m := new(EstadoCarga)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
 // InteraccionesServer is the server API for Interacciones service.
 type InteraccionesServer interface {
-	EscribirLog(context.Context, *LibroMetadata) (*AceptarLibro, error)
-	Upload(Interacciones_UploadServer) error
+	EscribirLog(context.Context, *Log) (*EstadoEscritura, error)
 }
 
 // UnimplementedInteraccionesServer can be embedded to have forward compatible implementations.
 type UnimplementedInteraccionesServer struct {
 }
 
-func (*UnimplementedInteraccionesServer) EscribirLog(context.Context, *LibroMetadata) (*AceptarLibro, error) {
+func (*UnimplementedInteraccionesServer) EscribirLog(context.Context, *Log) (*EstadoEscritura, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EscribirLog not implemented")
-}
-func (*UnimplementedInteraccionesServer) Upload(Interacciones_UploadServer) error {
-	return status.Errorf(codes.Unimplemented, "method Upload not implemented")
 }
 
 func RegisterInteraccionesServer(s *grpc.Server, srv InteraccionesServer) {
@@ -460,7 +279,7 @@ func RegisterInteraccionesServer(s *grpc.Server, srv InteraccionesServer) {
 }
 
 func _Interacciones_EscribirLog_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(LibroMetadata)
+	in := new(Log)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -472,35 +291,9 @@ func _Interacciones_EscribirLog_Handler(srv interface{}, ctx context.Context, de
 		FullMethod: "/com_namenode.Interacciones/EscribirLog",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InteraccionesServer).EscribirLog(ctx, req.(*LibroMetadata))
+		return srv.(InteraccionesServer).EscribirLog(ctx, req.(*Log))
 	}
 	return interceptor(ctx, in, info, handler)
-}
-
-func _Interacciones_Upload_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(InteraccionesServer).Upload(&interaccionesUploadServer{stream})
-}
-
-type Interacciones_UploadServer interface {
-	SendAndClose(*EstadoCarga) error
-	Recv() (*Chunk, error)
-	grpc.ServerStream
-}
-
-type interaccionesUploadServer struct {
-	grpc.ServerStream
-}
-
-func (x *interaccionesUploadServer) SendAndClose(m *EstadoCarga) error {
-	return x.ServerStream.SendMsg(m)
-}
-
-func (x *interaccionesUploadServer) Recv() (*Chunk, error) {
-	m := new(Chunk)
-	if err := x.ServerStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
 }
 
 var _Interacciones_serviceDesc = grpc.ServiceDesc{
@@ -512,12 +305,6 @@ var _Interacciones_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Interacciones_EscribirLog_Handler,
 		},
 	},
-	Streams: []grpc.StreamDesc{
-		{
-			StreamName:    "Upload",
-			Handler:       _Interacciones_Upload_Handler,
-			ClientStreams: true,
-		},
-	},
+	Streams:  []grpc.StreamDesc{},
 	Metadata: "com_namenode.proto",
 }
