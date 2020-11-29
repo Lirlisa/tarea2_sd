@@ -1,0 +1,13 @@
+syntax = "proto3";
+package libros;
+
+message Chunk {
+    string titulo = 1;
+    uint32 totalchunk = 2;
+    uint32 chunkactual = 3;
+    bytes data = 4;
+}
+
+service Interacciones {
+  rpc Subir(Chunk) returns (Chunk) {}
+}

@@ -2,18 +2,17 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"math"
 	"math/rand"
 	"os"
-	"strconv"
 	"strings"
 
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
 	"./ClienteName"
+	"./libros"
 )
 
 var tipo int
@@ -55,6 +54,13 @@ func ClienteUploader() {
 
 	defer file.Close()
 
+	var conn *grpc.ClientConn
+	conn, err = grpc.Dial(":9000", grpc.WithInsecure())
+	if err != nil {
+		log.Fatalf("did not connect: %s", err)
+	}
+	defer conn.Close()
+
 	fileInfo, _ := file.Stat()
 
 	var fileSize int64 = fileInfo.Size()
@@ -73,7 +79,7 @@ func ClienteUploader() {
 		partBuffer := make([]byte, partSize)
 
 		file.Read(partBuffer)
-		////////////////////////////////////////////////////////////////////////REEMPLAZAR PARA ENVIAR A DATANODE
+		/*////////////////////////////////////////////////////////////////////////REEMPLAZAR PARA ENVIAR A DATANODE
 		// write to disk
 		fileName := "bigfile_" + strconv.FormatUint(i, 10)
 		_, err := os.Create(fileName)
@@ -84,9 +90,17 @@ func ClienteUploader() {
 		}
 
 		// write/save buffer to disk
-		ioutil.WriteFile(fileName, partBuffer, os.ModeAppend)
+		ioutil.WriteFile(fileName, partBuffer, os.ModeAppend)*/
+		c := libros.NewInteraccionesClient(conn)
 
-		fmt.Println("Split to : ", fileName)
+		_, err = c.Subir(context.Background(), &libros.Chunk{
+			Titulo: "Hello From Client!",
+			Data:   partBuffer})
+		if err != nil {
+			log.Fatalf("Error when calling SayHello: %s", err)
+		}
+
+		fmt.Println("Split to : ")
 		fmt.Println(nodoAzar)
 	}
 
