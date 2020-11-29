@@ -10,15 +10,17 @@ message Disponibilidad{
 
 message Chunk{
     bytes Data = 1;
+    string Nombre = 2;
 }
 
 message EstadoSubida{
     bool Estado = 1;
+    string Msg = 2;
 }
 message Empty{
 }
 
 service Interacciones {
     rpc Disponible (Empty) returns (Disponibilidad);
-    rpc SubirArchivo (stream Chunk) returns (EstadoSubida);
+    rpc SubirArchivo (Chunk) returns (EstadoSubida);
 }
