@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"context"
-	"io/ioutil"
 	"log"
 	"net"
 	"os"
@@ -75,21 +74,27 @@ func main() {
 	}
 
 	var clientes [2](com_datanode.InteraccionesClient) //clientes grpc
-	data, err := ioutil.ReadFile(yo + ".txt")
+	data, err := os.Open(yo + ".txt")
 	if err != nil {
 		log.Fatalf("Error al leer archivo: %s", err.Error())
 	}
+	buf := make([]byte, 250*1000)
 	//generar clientes grpc
 	for i := range vecinos {
 		if activos[i] {
 			clientes[i] = com_datanode.NewInteraccionesClient(conexiones[i])
+			n, err := data.Read(buf)
+			if err != nil {
+				log.Fatalf("Error traspasar bytes: %s", err.Error())
+			}
 			respuesta, err := clientes[i].SubirArchivo(context.Background(), &com_datanode.Chunk{
 				Nombre: yo + ".txt",
-				Data:   data,
+				Data:   buf[:n],
 			})
 			if err != nil {
 				log.Panicf("Ha ocurrido un error: %s", err.Error())
 			}
+
 			log.Printf("Estado de envío: %s", respuesta.Estado)
 		}
 	}
