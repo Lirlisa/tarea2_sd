@@ -3,13 +3,13 @@ package main
 import (
 	"bufio"
 	"context"
-	"fmt"
+	"io/ioutil"
 	"log"
 	"net"
 	"os"
+	"sync"
 	"time"
 
-	"./com_namenode"
 	"./com_datanode"
 	"google.golang.org/grpc"
 )
@@ -30,18 +30,37 @@ func obtenerVecinos(nombre string) *[2]string {
 	return arr
 }
 
+func initServer(listener net.Listener) {
+	servidor := com_datanode.ServerDatanode{}
+	grpcServer := grpc.NewServer()
+	com_datanode.RegisterInteraccionesServer(grpcServer, &servidor)
+	if err := grpcServer.Serve(listener); err != nil {
+		log.Printf("Terminada ejecución. Motivo: %s", err.Error())
+	}
+}
+
 func main() {
+	var wait sync.WaitGroup
+
 	//iniciar servidor
 	listener, err := net.Listen("tcp", ":9000")
 	if err != nil {
 		log.Fatalf("Se ha producido un error al iniciar el servidor: %s", err.Error())
 	}
+
+	// dejar el servidor grpc en otro hilo
+	wait.Add(1)
+	go func() {
+		initServer(listener)
+		wait.Done()
+	}()
+
 	time.Sleep(time.Second) //pausa para darle tiempo a los resagados
 
-	yo = obtenerVecinos("yo.txt")[0] //nombre de este nodo
+	yo := obtenerVecinos("yo.txt")[0]        //nombre de este nodo
 	vecinos := obtenerVecinos("vecinos.txt") //nombres de los vecinos (dist45, dist46, etc.)
-	var conexiones [2](*grpc.ClientConn) //las conexioenes con cada vecino en el mismo orden del arreglo vecinos
-	activos := [2](bool) //para llevar cuenta de lso vecinos activos
+	var conexiones [2](*grpc.ClientConn)     //las conexioenes con cada vecino en el mismo orden del arreglo vecinos
+	var activos [2](bool)                    //para llevar cuenta de lso vecinos activos
 
 	//establecer conexion con vecinos activos
 	for i := range vecinos {
@@ -55,20 +74,22 @@ func main() {
 		}
 	}
 
-	clientes := [2](com_datanode.InteraccionesClient) //clientes grpc
-	data, err := ioutil.ReadFile(yo+".txt")
+	var clientes [2](com_datanode.InteraccionesClient) //clientes grpc
+	data, err := ioutil.ReadFile(yo + ".txt")
 	if err != nil {
 		log.Fatalf("Error al leer archivo: %s", err.Error())
 	}
 	//generar clientes grpc
 	for i := range vecinos {
-		if activo[i] {
-			clientes[i] = com_namenode.NewInteraccionesClient(conexiones[i])
-			respuesta, err := cliente[i].SubirArchivo(context.Background(), &com_datanode.Chunk{
-				Nombre: yo+".txt",
-				Data: data,
+		if activos[i] {
+			clientes[i] = com_datanode.NewInteraccionesClient(conexiones[i])
+			respuesta, _ := clientes[i].SubirArchivo(context.Background(), &com_datanode.Chunk{
+				Nombre: yo + ".txt",
+				Data:   data,
 			})
 			log.Printf("Estado de envío: %s", respuesta.Estado)
 		}
 	}
+
+	wait.Wait()
 }
