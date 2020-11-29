@@ -83,10 +83,13 @@ func main() {
 	for i := range vecinos {
 		if activos[i] {
 			clientes[i] = com_datanode.NewInteraccionesClient(conexiones[i])
-			respuesta, _ := clientes[i].SubirArchivo(context.Background(), &com_datanode.Chunk{
+			respuesta, err := clientes[i].SubirArchivo(context.Background(), &com_datanode.Chunk{
 				Nombre: yo + ".txt",
 				Data:   data,
 			})
+			if err != nil {
+				log.Panicf("Ha ocurrido un error: %s", err.Error())
+			}
 			log.Printf("Estado de envío: %s", respuesta.Estado)
 		}
 	}
