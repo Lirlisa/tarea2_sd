@@ -85,6 +85,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error al leer archivo: %s", err.Error())
 	}
+	defer data.Close()
 	buf := make([]byte, 250*1000)
 	//generar clientes grpc
 	var contador, i int
