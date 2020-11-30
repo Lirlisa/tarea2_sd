@@ -119,7 +119,7 @@ func main() {
 		}
 		if contador == 2 {
 			*canalVecinos = true
-			ser.Stop()
+			ser.GracefulStop()
 			break
 		}
 		i = (i + 1) % 2
