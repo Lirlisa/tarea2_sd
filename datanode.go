@@ -64,7 +64,7 @@ func main() {
 	activos := make([]bool, 2)                  //para llevar cuenta de lso vecinos activos
 
 	//establecer conexion con vecinos activos
-	var canalVecinos *bool
+	canalVecinos := new(bool)
 	*canalVecinos = false
 	go func(conexiones [](*grpc.ClientConn), activos []bool, vecinos *[2]string, canal *bool) {
 		var i int
