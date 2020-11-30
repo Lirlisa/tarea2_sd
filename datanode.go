@@ -64,9 +64,9 @@ func main() {
 	activos := make([]bool, 2)                  //para llevar cuenta de lso vecinos activos
 
 	//establecer conexion con vecinos activos
-	canalVecinos := make(chan bool)
-	canalVecinos <- false
-	go func(conexiones [](*grpc.ClientConn), activos []bool, vecinos *[2]string, canal chan bool) {
+	var canalVecinos *bool
+	*canalVecinos = false
+	go func(conexiones [](*grpc.ClientConn), activos []bool, vecinos *[2]string, canal *bool) {
 		var i int
 		var ctx context.Context
 		for {
@@ -83,7 +83,7 @@ func main() {
 					defer conexiones[i].Close()
 				}
 			}
-			if <-canal {
+			if *canal {
 				break
 			}
 			i = (i + 1) % 2
@@ -115,7 +115,7 @@ func main() {
 			contador++
 		}
 		if contador == 2 {
-			canalVecinos <- false
+			*canalVecinos = true
 			ser := <-canalServer
 			ser.Stop()
 			break
