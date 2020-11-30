@@ -103,7 +103,7 @@ func main() {
 	//generar clientes grpc
 	var contador, i int
 	for {
-		enviado := [2]bool
+		var enviado [2]bool
 		if activos[i] && !enviado[i] {
 			clientes[i] = com_datanode.NewInteraccionesClient(conexiones[i])
 			n, err := data.Read(buf)
