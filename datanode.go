@@ -64,9 +64,13 @@ func main() {
 	//establecer conexion con vecinos activos
 	go func(conexiones [](*grpc.ClientConn), activos []bool, vecinos *[2]string) {
 		var i int
+		var ctx context.Context
 		for {
+			ctx, _ = context.WithTimeout(context.Background(), 2*time.Second)
 			if !activos[i] {
-				conexiones[i], err = grpc.Dial(vecinos[i]+":9000", grpc.WithInsecure(), grpc.WithBlock())
+				conexiones[i], err = grpc.DialContext(
+					ctx,
+					vecinos[i]+":9000", grpc.WithInsecure(), grpc.WithBlock())
 				if err != nil {
 					log.Println("Nodo se pudo establecer conexión con %s", vecinos[i])
 					activos[i] = false
