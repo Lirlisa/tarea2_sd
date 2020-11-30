@@ -65,6 +65,7 @@ func main() {
 
 	//establecer conexion con vecinos activos
 	canalVecinos := make(chan bool)
+	canalVecinos <- false
 	go func(conexiones [](*grpc.ClientConn), activos []bool, vecinos *[2]string, canal chan bool) {
 		var i int
 		var ctx context.Context
