@@ -84,9 +84,6 @@ func main() {
 		if activos[i] {
 			clientes[i] = com_datanode.NewInteraccionesClient(conexiones[i])
 			n, err := data.Read(buf)
-			if err != nil {
-				log.Fatalf("Error traspasar bytes: %s", err.Error())
-			}
 			respuesta, err := clientes[i].SubirArchivo(context.Background(), &com_datanode.Chunk{
 				Nombre: yo + ".txt",
 				Data:   buf[:n],
