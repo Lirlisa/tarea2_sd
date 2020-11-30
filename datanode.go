@@ -66,7 +66,7 @@ func main() {
 		var i int
 		for {
 			if !activos[i] {
-				conexiones[i], err = grpc.Dial(vecinos[i]+":9000", grpc.WithInsecure())
+				conexiones[i], err = grpc.Dial(vecinos[i]+":9000", grpc.WithInsecure(), grpc.WithBlock())
 				if err != nil {
 					log.Println("Nodo se pudo establecer conexión con %s", vecinos[i])
 					activos[i] = false
