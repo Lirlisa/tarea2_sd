@@ -1,0 +1,32 @@
+syntax="proto3";
+
+package com_cliente;
+
+option go_package = ".;com_cliente";
+
+message Libro {
+    string Titulo = 1;
+    uint64 TotalChunks = 2;
+    uint64 ChunkActual = 3;
+    bytes Chunk = 4;
+}
+
+message EstadoSubida {
+    bool Estado = 1;
+    string Msg = 2;
+}
+
+message SolicitudChunk {
+    string Titulo = 1;
+    uint64 NChunk = 2;
+}
+
+message Chunk {
+    bool Estado = 1;//para el caso de que no lo tenga el nodo
+    bytes Data = 2;
+}
+
+service Interacciones {
+    rpc SubirLibro (Libro) returns (EstadoSubida);
+    rpc PedirChunk (SolicitudChunk) returns (Chunk);
+}
