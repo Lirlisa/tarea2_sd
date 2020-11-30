@@ -62,7 +62,8 @@ func main() {
 	activos := make([]bool, 2)                  //para llevar cuenta de lso vecinos activos
 
 	//establecer conexion con vecinos activos
-	go func(conexiones [](*grpc.ClientConn), activos []bool, vecinos *[2]string) {
+	canal := make(chan bool)
+	go func(conexiones [](*grpc.ClientConn), activos []bool, vecinos *[2]string, canal chan bool) {
 		var i int
 		var ctx context.Context
 		var contador int
@@ -77,17 +78,16 @@ func main() {
 					activos[i] = false
 				} else {
 					activos[i] = true
-					contador++
 					defer conexiones[i].Close()
 				}
 			}
-			if contador == 2 {
+			if <-canal {
 				break
 			}
 			i = (i + 1) % 2
 			time.Sleep(time.Millisecond)
 		}
-	}(conexiones, activos, vecinos)
+	}(conexiones, activos, vecinos, canal)
 
 	var clientes [2](com_datanode.InteraccionesClient) //clientes grpc
 	data, err := os.Open(yo + ".txt")
@@ -113,6 +113,7 @@ func main() {
 			contador++
 		}
 		if contador == 2 {
+			canal <- false
 			break
 		}
 		i = (i + 1) % 2
