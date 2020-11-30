@@ -29,10 +29,11 @@ func obtenerVecinos(nombre string) *[2]string {
 	return arr
 }
 
-func initServer(listener net.Listener) {
+func initServer(listener net.Listener, canal chan *grpc.Server) {
 	servidor := com_datanode.ServerDatanode{}
 	grpcServer := grpc.NewServer()
 	com_datanode.RegisterInteraccionesServer(grpcServer, &servidor)
+	canal <- grpcServer
 	if err := grpcServer.Serve(listener); err != nil {
 		log.Printf("Terminada ejecución. Motivo: %s", err.Error())
 	}
@@ -48,11 +49,12 @@ func main() {
 	}
 
 	// dejar el servidor grpc en otro hilo
+	canalServer := make(chan *grpc.Server)
 	wait.Add(1)
-	go func() {
-		initServer(listener)
+	go func(canal chan *grpc.Server) {
+		initServer(listener, canal)
 		wait.Done()
-	}()
+	}(canalServer)
 
 	time.Sleep(time.Second) //pausa para darle tiempo a los resagados
 
@@ -62,11 +64,10 @@ func main() {
 	activos := make([]bool, 2)                  //para llevar cuenta de lso vecinos activos
 
 	//establecer conexion con vecinos activos
-	canal := make(chan bool)
+	canalVecinos := make(chan bool)
 	go func(conexiones [](*grpc.ClientConn), activos []bool, vecinos *[2]string, canal chan bool) {
 		var i int
 		var ctx context.Context
-		var contador int
 		for {
 			ctx, _ = context.WithTimeout(context.Background(), 2*time.Second)
 			if !activos[i] {
@@ -87,7 +88,7 @@ func main() {
 			i = (i + 1) % 2
 			time.Sleep(time.Millisecond)
 		}
-	}(conexiones, activos, vecinos, canal)
+	}(conexiones, activos, vecinos, canalVecinos)
 
 	var clientes [2](com_datanode.InteraccionesClient) //clientes grpc
 	data, err := os.Open(yo + ".txt")
@@ -113,7 +114,9 @@ func main() {
 			contador++
 		}
 		if contador == 2 {
-			canal <- false
+			canalVecinos <- false
+			ser := <-canalServer
+			ser.Stop()
 			break
 		}
 		i = (i + 1) % 2
