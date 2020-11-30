@@ -56,22 +56,29 @@ func main() {
 
 	time.Sleep(time.Second) //pausa para darle tiempo a los resagados
 
-	yo := obtenerVecinos("yo.txt")[0]        //nombre de este nodo
-	vecinos := obtenerVecinos("vecinos.txt") //nombres de los vecinos (dist45, dist46, etc.)
-	var conexiones [2](*grpc.ClientConn)     //las conexioenes con cada vecino en el mismo orden del arreglo vecinos
-	var activos [2](bool)                    //para llevar cuenta de lso vecinos activos
+	yo := obtenerVecinos("yo.txt")[0]           //nombre de este nodo
+	vecinos := obtenerVecinos("vecinos.txt")    //nombres de los vecinos (dist45, dist46, etc.)
+	conexiones := make([](*grpc.ClientConn), 2) //las conexioenes con cada vecino en el mismo orden del arreglo vecinos
+	activos := make([]bool, 2)                  //para llevar cuenta de lso vecinos activos
 
 	//establecer conexion con vecinos activos
-	for i := range vecinos {
-		conexiones[i], err = grpc.Dial(vecinos[i]+":9000", grpc.WithInsecure())
-		if err != nil {
-			log.Println("Nodo se pudo establecer conexión con %s", vecinos[i])
-			activos[i] = false
-		} else {
-			activos[i] = true
-			defer conexiones[i].Close()
+	go func(conexiones [](*grpc.ClientConn), activos []bool, vecinos *[2]string) {
+		var i int
+		for {
+			if !activos[i] {
+				conexiones[i], err = grpc.Dial(vecinos[i]+":9000", grpc.WithInsecure())
+				if err != nil {
+					log.Println("Nodo se pudo establecer conexión con %s", vecinos[i])
+					activos[i] = false
+				} else {
+					activos[i] = true
+					defer conexiones[i].Close()
+				}
+			}
+			i = (i + 1) % 2
+			time.Sleep(time.Millisecond)
 		}
-	}
+	}(conexiones, activos, vecinos)
 
 	var clientes [2](com_datanode.InteraccionesClient) //clientes grpc
 	data, err := os.Open(yo + ".txt")
@@ -80,7 +87,8 @@ func main() {
 	}
 	buf := make([]byte, 250*1000)
 	//generar clientes grpc
-	for i := range vecinos {
+	var contador, i int
+	for {
 		if activos[i] {
 			clientes[i] = com_datanode.NewInteraccionesClient(conexiones[i])
 			n, err := data.Read(buf)
@@ -91,9 +99,13 @@ func main() {
 			if err != nil {
 				log.Panicf("Ha ocurrido un error: %s", err.Error())
 			}
-
 			log.Printf("Estado de envío: %s", respuesta.Estado)
+			contador++
 		}
+		if contador == 2 {
+			break
+		}
+		i = (i + 1) % 2
 	}
 
 	wait.Wait()

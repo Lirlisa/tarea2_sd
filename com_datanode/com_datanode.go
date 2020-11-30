@@ -33,6 +33,7 @@ func (c *ServerDatanode) SubirArchivo(ctx context.Context, in *Chunk) (*EstadoSu
 
 	_, err = f.Write(in.GetData())
 	if err != nil {
+		log.Printf("Se recibió: %s", in.GetData())
 		return &EstadoSubida{
 			Estado: false,
 			Msg:    err.Error(),
