@@ -56,6 +56,8 @@ func main() {
 		wait.Done()
 	}(canalServer)
 
+	ser := <-canalServer
+
 	time.Sleep(time.Second) //pausa para darle tiempo a los resagados
 
 	yo := obtenerVecinos("yo.txt")[0]           //nombre de este nodo
@@ -76,7 +78,7 @@ func main() {
 					ctx,
 					vecinos[i]+":9000", grpc.WithInsecure(), grpc.WithBlock())
 				if err != nil {
-					log.Println("Nodo se pudo establecer conexión con %s", vecinos[i])
+					log.Printf("Nodo se pudo establecer conexión con %s\n", vecinos[i])
 					activos[i] = false
 				} else {
 					activos[i] = true
@@ -116,7 +118,6 @@ func main() {
 		}
 		if contador == 2 {
 			*canalVecinos = true
-			ser := <-canalServer
 			ser.Stop()
 			break
 		}
