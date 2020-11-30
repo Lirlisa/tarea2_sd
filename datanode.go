@@ -65,6 +65,7 @@ func main() {
 	go func(conexiones [](*grpc.ClientConn), activos []bool, vecinos *[2]string) {
 		var i int
 		var ctx context.Context
+		var contador int
 		for {
 			ctx, _ = context.WithTimeout(context.Background(), 2*time.Second)
 			if !activos[i] {
@@ -76,8 +77,12 @@ func main() {
 					activos[i] = false
 				} else {
 					activos[i] = true
+					contador++
 					defer conexiones[i].Close()
 				}
+			}
+			if contador == 2 {
+				break
 			}
 			i = (i + 1) % 2
 			time.Sleep(time.Millisecond)
