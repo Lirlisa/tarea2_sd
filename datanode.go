@@ -12,6 +12,7 @@ import (
 
 	"./com_cliente"
 	"./com_datanode"
+	"./com_namenode"
 	"./estructuras"
 	"google.golang.org/grpc"
 )
@@ -112,15 +113,27 @@ func main() {
 
 	clientes := make([](com_datanode.InteraccionesClient), 2) //clientes grpc
 	go func(clientes *[](com_datanode.InteraccionesClient)) {
-		var i int
-		for {
-			if activos[i] {
-				(*clientes)[i] = com_datanode.NewInteraccionesClient(conexiones[i])
-			}
+		for i := 0; i < 2; i++ {
+			(*clientes)[i] = com_datanode.NewInteraccionesClient(conexiones[i])
+
 		}
 	}(&clientes)
 
-	go func(vecinos *[2]string) {
+	var conexionNamenode *grpc.ClientConn
+	go func(conexionNamenode **grpc.ClientConn) {
+		for {
+			*conexionNamenode, err = grpc.Dial("dist45:9000", grpc.WithInsecure())
+			if err != nil {
+				log.Printf("no se pudo conectar con namenode... Reintentando...")
+			} else {
+				log.Printf("Conectado con namenode")
+				break
+			}
+		}
+	}(&conexionNamenode)
+	clienteNamenode := com_namenode.NewInteraccionesClient(conexionNamenode)
+
+	go func(vecinos *[2]string, clientes *[](com_datanode.InteraccionesClient), clienteNamenode *com_namenode.InteraccionesClient) {
 		for {
 			if len(estructuras.ColaParaEnvios) > 0 {
 				elem := estructuras.Pop(&estructuras.ColaParaEnvios)
@@ -131,7 +144,7 @@ func main() {
 				var i int
 				for uint64(i) < total {
 					ctx, _ := context.WithTimeout(context.Background(), 2*time.Second)
-					respuesta, err := clientes[i].Disponible(ctx, &com_datanode.Empty{})
+					respuesta, err := (*clientes)[i].Disponible(ctx, &com_datanode.Empty{})
 					if err != nil {
 						log.Printf("Nodo %s no está disponible.", vecinos[i])
 					} else if !respuesta.Estado {
@@ -156,7 +169,7 @@ func main() {
 					defer data.Close()
 					buf = make([]byte, 250*1000)
 					n, _ = data.Read(buf)
-					respuesta, err := clientes[paraMandar[k]].SubirArchivo(context.Background(), &com_datanode.Chunk{
+					respuesta, err := (*clientes)[paraMandar[k]].SubirArchivo(context.Background(), &com_datanode.Chunk{
 						Data:   buf[:n],
 						Nombre: titulo2,
 					})
@@ -171,10 +184,20 @@ func main() {
 					contador++
 					k = (k + 1) % uint64(len(paraMandar))
 				}
+				res, err := (*clienteNamenode).EscribirLog(context.Background(), &com_namenode.Log{
+					Texto: paraLogear,
+				})
+				if err != nil {
+					log.Printf("No se pudo escribir en log")
+				} else if !res.Estado {
+					log.Printf("No se pudo escribir en log debido a %s", res.Msg)
+				} else {
+					log.Printf("Escrito en log con éxito")
+				}
 
 			}
 		}
-	}(vecinos)
+	}(vecinos, &clientes, &clienteNamenode)
 	//
 	// data, err := os.Open(yo + ".txt")
 	// if err != nil {
