@@ -86,7 +86,8 @@ func main() {
 	//establecer conexion con vecinos activos
 	canalVecinos := new(bool)
 	*canalVecinos = false
-	go func(conexiones *[](*grpc.ClientConn), activos *[]bool, vecinos *[2]string, canal *bool) {
+	clientes := make([](com_datanode.InteraccionesClient), 2) //clientes grpc
+	go func(conexiones *[](*grpc.ClientConn), activos *[]bool, vecinos *[2]string, canal *bool, clientes *[](com_datanode.InteraccionesClient)) {
 		var i int
 		var ctx context.Context
 		for {
@@ -100,6 +101,7 @@ func main() {
 					(*activos)[i] = false
 				} else {
 					(*activos)[i] = true
+					(*clientes)[i] = com_datanode.NewInteraccionesClient((*conexiones)[i])
 					log.Printf("Conectado con %s", vecinos[i])
 					defer (*conexiones)[i].Close()
 				}
@@ -110,9 +112,8 @@ func main() {
 			i = (i + 1) % 2
 			time.Sleep(time.Millisecond)
 		}
-	}(&conexiones, &activos, vecinos, canalVecinos)
+	}(&conexiones, &activos, vecinos, canalVecinos, &clientes)
 
-	clientes := make([](com_datanode.InteraccionesClient), 2) //clientes grpc
 	for i := 0; i < 2; i++ {
 		clientes[i] = com_datanode.NewInteraccionesClient(conexiones[i])
 
