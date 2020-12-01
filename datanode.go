@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"context"
-	"fmt"
 	"log"
 	"net"
 	"os"
@@ -137,9 +136,7 @@ func main() {
 				total := libro.ChunksTotales
 				titulo := libro.Titulo
 				paraMandar := make([]uint64, 0)
-				var i int
-				var contador uint64
-				for contador < total {
+				for i := 0; i < 2; i++ {
 					ctx, _ := context.WithTimeout(context.Background(), 2*time.Second)
 					respuesta, err := (*clientes)[i].Disponible(ctx, &com_datanode.Empty{})
 					if err != nil {
@@ -149,18 +146,16 @@ func main() {
 					} else {
 						paraMandar = append(paraMandar, uint64(i))
 					}
-					i = (i + 1) % 2
-					contador++
 				}
 				paraMandar = append(paraMandar, uint64(2))
-				contador = 0
+				var contador uint64
 				var k uint64
 				var buf []byte
 				var data *os.File
 				var n int
 				var titulo2 string
 				paraLogear := titulo + " " + strconv.FormatUint(total, 10) + "\n"
-				fmt.Println(paraMandar)
+				//fmt.Println(paraMandar)
 				for contador < total {
 					titulo2 = titulo + "_" + strconv.FormatUint(contador+1, 10)
 					if paraMandar[k] == 2 {
