@@ -56,11 +56,11 @@ func main() {
 		wait.Done()
 	}(canalServer)
 
-	ser := <-canalServer
+	//ser := <-canalServer
 
 	time.Sleep(time.Second) //pausa para darle tiempo a los resagados
 
-	yo := obtenerVecinos("yo.txt")[0]           //nombre de este nodo
+	//yo := obtenerVecinos("yo.txt")[0]           //nombre de este nodo
 	vecinos := obtenerVecinos("vecinos.txt")    //nombres de los vecinos (dist45, dist46, etc.)
 	conexiones := make([](*grpc.ClientConn), 2) //las conexioenes con cada vecino en el mismo orden del arreglo vecinos
 	activos := make([]bool, 2)                  //para llevar cuenta de lso vecinos activos
