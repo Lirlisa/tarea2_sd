@@ -13,7 +13,7 @@ type LibrosGuardados struct {
 //AlmacenLibros variable global que lleva cuenta de los libros recibidos indexados por nombre
 var AlmacenLibros map[string]*LibrosGuardados = make(map[string]*LibrosGuardados)
 
-//Push para introducir elementos a la cola
+//Push para introducir elementos a la cola thread safe
 func Push(q *[]string, elemento string) {
 	var candado sync.Mutex
 	candado.Lock()
@@ -21,7 +21,7 @@ func Push(q *[]string, elemento string) {
 	candado.Unlock()
 }
 
-//Pop saca un elemento de la cola
+//Pop saca un elemento de la cola thread safe
 func Pop(q *[]string) string {
 	var candado sync.Mutex
 	candado.Lock()

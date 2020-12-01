@@ -6,10 +6,9 @@ import (
 	"log"
 	"net"
 	"os"
+	"strconv"
 	"sync"
 	"time"
-
-	"sync"
 
 	"./com_cliente"
 	"./com_datanode"
@@ -85,22 +84,22 @@ func main() {
 	//establecer conexion con vecinos activos
 	canalVecinos := new(bool)
 	*canalVecinos = false
-	go func(conexiones [](*grpc.ClientConn), activos []bool, vecinos *[2]string, canal *bool) {
+	go func(conexiones *[](*grpc.ClientConn), activos *[]bool, vecinos *[2]string, canal *bool) {
 		var i int
 		var ctx context.Context
 		for {
 			ctx, _ = context.WithTimeout(context.Background(), 2*time.Second)
-			if !activos[i] {
-				conexiones[i], err = grpc.DialContext(
+			if !(*activos)[i] {
+				(*conexiones)[i], err = grpc.DialContext(
 					ctx,
 					vecinos[i]+":9000", grpc.WithInsecure(), grpc.WithBlock())
 				if err != nil {
 					log.Printf("Nodo se pudo establecer conexión con %s\n", vecinos[i])
-					activos[i] = false
+					(*activos)[i] = false
 				} else {
-					activos[i] = true
+					(*activos)[i] = true
 					log.Printf("Conectado con %s", vecinos[i])
-					defer conexiones[i].Close()
+					defer (*conexiones)[i].Close()
 				}
 			}
 			if *canal {
@@ -109,19 +108,74 @@ func main() {
 			i = (i + 1) % 2
 			time.Sleep(time.Millisecond)
 		}
-	}(conexiones, activos, vecinos, canalVecinos)
+	}(&conexiones, &activos, vecinos, canalVecinos)
 
-	go func() {
-		var candado sync.Mutex
+	clientes := make([](com_datanode.InteraccionesClient), 2) //clientes grpc
+	go func(clientes *[](com_datanode.InteraccionesClient)) {
+		var i int
+		for {
+			if activos[i] {
+				(*clientes)[i] = com_datanode.NewInteraccionesClient(conexiones[i])
+			}
+		}
+	}(&clientes)
+
+	go func(vecinos *[2]string) {
 		for {
 			if len(estructuras.ColaParaEnvios) > 0 {
-				candado.Lock()
-				elem := estructuras.Pop(estructuras.ColaParaEnvios)
+				elem := estructuras.Pop(&estructuras.ColaParaEnvios)
+				libro := *estructuras.AlmacenLibros[elem]
+				total := libro.ChunksTotales
+				titulo := libro.Titulo
+				paraMandar := make([]uint64, 0)
+				var i int
+				for uint64(i) < total {
+					ctx, _ := context.WithTimeout(context.Background(), 2*time.Second)
+					respuesta, err := clientes[i].Disponible(ctx, &com_datanode.Empty{})
+					if err != nil {
+						log.Printf("Nodo %s no está disponible.", vecinos[i])
+					} else if !respuesta.Estado {
+						log.Printf("Nodo %s no está disponible.", vecinos[i])
+					} else {
+						paraMandar = append(paraMandar, uint64(i))
+					}
+				}
+				var contador uint64
+				var k uint64
+				var buf []byte
+				var data *os.File
+				var n int
+				var titulo2 string
+				paraLogear := titulo + " " + strconv.FormatUint(total, 10) + "\n"
+				for contador < total {
+					titulo2 = titulo + "_" + strconv.FormatUint(contador+1, 10)
+					data, err = os.Open(titulo2)
+					if err != nil {
+						log.Fatalf("Error al leer archivo: %s", err.Error())
+					}
+					defer data.Close()
+					buf = make([]byte, 250*1000)
+					n, _ = data.Read(buf)
+					respuesta, err := clientes[paraMandar[k]].SubirArchivo(context.Background(), &com_datanode.Chunk{
+						Data:   buf[:n],
+						Nombre: titulo2,
+					})
+					if err != nil {
+						log.Printf("%s FRACASADO por nodo %s", vecinos[paraMandar[k]])
+					} else if !respuesta.Estado {
+						log.Printf("%s FRACASADO por nodo %s. Motivo: %s", vecinos[paraMandar[k]], respuesta.Msg)
+					} else {
+						log.Printf("%s RECIBIDO con exito por nodo %s", vecinos[paraMandar[k]])
+					}
+					paraLogear += titulo2 + " " + vecinos[paraMandar[k]] + "\n"
+					contador++
+					k = (k + 1) % uint64(len(paraMandar))
+				}
 
 			}
 		}
-	}()
-	// var clientes [2](com_datanode.InteraccionesClient) //clientes grpc
+	}(vecinos)
+	//
 	// data, err := os.Open(yo + ".txt")
 	// if err != nil {
 	// 	log.Fatalf("Error al leer archivo: %s", err.Error())

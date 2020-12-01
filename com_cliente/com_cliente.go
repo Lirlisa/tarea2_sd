@@ -41,7 +41,7 @@ func (c *ServerCliente) SubirLibro(ctx context.Context, in *Libro) (*EstadoSubid
 	if _, ok := estructuras.AlmacenLibros[in.GetTitulo()]; ok {
 		estructuras.AlmacenLibros[in.GetTitulo()].ChunksRecibidos++
 		if estructuras.AlmacenLibros[in.GetTitulo()].ChunksTotales == estructuras.AlmacenLibros[in.GetTitulo()].ChunksRecibidos {
-			append(estructuras.ColaParaEnvios, in.GetTitulo())
+			estructuras.Push(&estructuras.ColaParaEnvios, in.GetTitulo())
 		}
 	} else {
 		estructuras.AlmacenLibros[in.GetTitulo()] = new(estructuras.LibrosGuardados)
