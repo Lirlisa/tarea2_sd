@@ -113,12 +113,10 @@ func main() {
 	}(&conexiones, &activos, vecinos, canalVecinos)
 
 	clientes := make([](com_datanode.InteraccionesClient), 2) //clientes grpc
-	go func(clientes *[](com_datanode.InteraccionesClient)) {
-		for i := 0; i < 2; i++ {
-			(*clientes)[i] = com_datanode.NewInteraccionesClient(conexiones[i])
+	for i := 0; i < 2; i++ {
+		clientes[i] = com_datanode.NewInteraccionesClient(conexiones[i])
 
-		}
-	}(&clientes)
+	}
 
 	var conexionNamenode *grpc.ClientConn
 	go func(conexionNamenode **grpc.ClientConn) {
