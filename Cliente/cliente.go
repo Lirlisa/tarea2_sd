@@ -108,15 +108,15 @@ func ClienteUploader() {
 		ioutil.WriteFile(fileName, partBuffer, os.ModeAppend)*/
 		c := com_cliente.NewInteraccionesClient(conn)
 
-		respuesta, err = c.SubirLibro(context.Background(), &com_cliente.Libro{
-			Titulo: strings.TrimRight(libro, ".pdf"),
+		respuesta, err := c.SubirLibro(context.Background(), &com_cliente.Libro{
+			Titulo:      strings.TrimRight(libro, ".pdf"),
 			TotalChunks: totalPartsNum,
-			ChunkActual: i+1,
-			Data:   partBuffer})
+			ChunkActual: i + 1,
+			Chunk:       partBuffer})
 		if err != nil {
 			log.Fatalf("Error al subir chunk: %s", err)
 		}
-		if respuesta.Estado==false{
+		if respuesta.Estado == false {
 			log.Fatalf("Error al subir chunk: %s", respuesta.Msg)
 		}
 
@@ -188,7 +188,7 @@ func ClienteDownloader() {
 		os.Exit(1)
 	}
 
-	var writePosition int64 = 0
+	//var writePosition int64 = 0
 
 	for d := 0; d < len(ubicacioneslista); d++ {
 
@@ -202,28 +202,27 @@ func ClienteDownloader() {
 
 		c := com_cliente.NewInteraccionesClient(conn)
 
-		respuesta, err = c.PedirChunk(context.Background(), &com_cliente.Libro{
+		respuesta, err := c.PedirChunk(context.Background(), &com_cliente.SolicitudChunk{
 			Titulo: libro,
-			NChunck: uint64(d+1))
+			NChunk: uint64(d + 1),
+		})
 		if err != nil {
 			log.Fatalf("Error al pedir chunk: %s", err)
 		}
 
-		if respuesta.Estado==true{
-			_, err := file.Write(response.Data)
+		if respuesta.Estado {
+			_, err := file.Write(respuesta.Data)
 
 			if err != nil {
-					fmt.Println(err)
-					os.Exit(1)
+				fmt.Println(err)
+				os.Exit(1)
 			}
 
 			file.Sync() //flush to disk
-		} else{
-			log.Fatalf("Error al pedir chunk %d",d+1)
+		} else {
+			log.Fatalf("Error al pedir chunk %d", d+1)
 		}
-
 
 	}
 	file.Close()
 }
-
