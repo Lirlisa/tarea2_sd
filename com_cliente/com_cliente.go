@@ -12,7 +12,7 @@ type ServerCliente struct {
 }
 
 func (c *ServerCliente) SubirLibro(ctx context.Context, in *Libro) (*EstadoSubida, error) {
-	val := strconv.Itoa(in.GetChunkActual())
+	val := strconv.FormatUint(in.GetChunkActual(), 10)
 	f, err := os.OpenFile(in.GetTitulo()+"_"+val, os.O_WRONLY|os.O_CREATE, 0755)
 	if err != nil {
 		log.Printf("No se pude crear chunk: %s", err.Error())
@@ -25,7 +25,6 @@ func (c *ServerCliente) SubirLibro(ctx context.Context, in *Libro) (*EstadoSubid
 	log.Println("xd")
 	_, err = f.Write(in.GetChunk())
 	if err != nil {
-		log.Printf("Se recibió: %s", in.GetData())
 		return &EstadoSubida{
 			Estado: false,
 			Msg:    err.Error(),
@@ -39,7 +38,7 @@ func (c *ServerCliente) SubirLibro(ctx context.Context, in *Libro) (*EstadoSubid
 }
 
 func (c *ServerCliente) PedirChunk(ctx context.Context, in *SolicitudChunk) (*Chunk, error) {
-	val := strconv.Itoa(in.GetNChunk())
+	val := strconv.FormatUint(in.GetNChunk(), 10)
 	buf := make([]byte, 250*1000)
 	data, err := os.Open(in.GetTitulo() + "_" + val)
 	if err != nil {
