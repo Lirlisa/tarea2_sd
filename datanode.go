@@ -180,7 +180,7 @@ func main() {
 					} else if !respuesta.Estado {
 						log.Printf("%s FRACASADO por nodo %s. Motivo: %s", vecinos[paraMandar[k]], respuesta.Msg)
 					} else {
-						log.Printf("%s RECIBIDO con exito por nodo %s", vecinos[paraMandar[k]])
+						log.Printf("%s RECIBIDO con exito por nodo %s", titulo2, vecinos[paraMandar[k]])
 						err = os.Remove(titulo2)
 						if err != nil {
 							log.Printf("No se pudo eliminar %s", titulo2)
