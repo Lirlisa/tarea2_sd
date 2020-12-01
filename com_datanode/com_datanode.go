@@ -7,19 +7,19 @@ import (
 	"golang.org/x/net/context"
 )
 
+//ServerDatanode representa el servidor para datanode
 type ServerDatanode struct {
 	placeholder int
 }
 
+//Disponible permite saber si un nodo está disponible
 func (s *ServerDatanode) Disponible(ctx context.Context, in *Empty) (*Disponibilidad, error) {
-	/*
-		test test test
-	*/
 	return &Disponibilidad{
 		Estado: true,
 	}, nil
 }
 
+//SubirArchivo le manda un archivo a los otros datanodes
 func (c *ServerDatanode) SubirArchivo(ctx context.Context, in *Chunk) (*EstadoSubida, error) {
 	f, err := os.OpenFile(in.GetNombre(), os.O_WRONLY|os.O_CREATE, 0755)
 	if err != nil {

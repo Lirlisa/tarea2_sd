@@ -9,8 +9,11 @@ import (
 	"sync"
 	"time"
 
+	"sync"
+
 	"./com_cliente"
 	"./com_datanode"
+	"./estructuras"
 	"google.golang.org/grpc"
 )
 
@@ -108,6 +111,16 @@ func main() {
 		}
 	}(conexiones, activos, vecinos, canalVecinos)
 
+	go func() {
+		var candado sync.Mutex
+		for {
+			if len(estructuras.ColaParaEnvios) > 0 {
+				candado.Lock()
+				elem := estructuras.Pop(estructuras.ColaParaEnvios)
+
+			}
+		}
+	}()
 	// var clientes [2](com_datanode.InteraccionesClient) //clientes grpc
 	// data, err := os.Open(yo + ".txt")
 	// if err != nil {
