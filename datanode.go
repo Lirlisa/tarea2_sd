@@ -70,7 +70,7 @@ func main() {
 		wait.Done()
 	}(canalServer)
 
-	_ := <-canalServer
+	_ = <-canalServer
 
 	time.Sleep(time.Second) //pausa para darle tiempo a los resagados
 
