@@ -78,7 +78,7 @@ func main() {
 
 	time.Sleep(time.Second) //pausa para darle tiempo a los resagados
 
-	//yo := obtenerVecinos("yo.txt")[0]           //nombre de este nodo
+	yo := obtenerVecinos("yo.txt")[0]           //nombre de este nodo
 	vecinos := obtenerVecinos("vecinos.txt")    //nombres de los vecinos (dist45, dist46, etc.)
 	conexiones := make([](*grpc.ClientConn), 2) //las conexioenes con cada vecino en el mismo orden del arreglo vecinos
 	activos := make([]bool, 2)                  //para llevar cuenta de lso vecinos activos
@@ -129,7 +129,7 @@ func main() {
 	}
 	clienteNamenode := com_namenode.NewInteraccionesClient(conexionNamenode)
 
-	go func(vecinos *[2]string, clientes *[]com_datanode.InteraccionesClient, clienteNamenode *com_namenode.InteraccionesClient) {
+	go func(vecinos *[2]string, clientes *[]com_datanode.InteraccionesClient, clienteNamenode *com_namenode.InteraccionesClient, yo string) {
 		fmt.Println(*clientes)
 		for {
 			if len(estructuras.ColaParaEnvios) > 0 {
@@ -153,6 +153,7 @@ func main() {
 					i = (i + 1) % 2
 					contador++
 				}
+				paraMandar = append(paraMandar, uint64(2))
 				contador = 0
 				var k uint64
 				var buf []byte
@@ -162,23 +163,33 @@ func main() {
 				paraLogear := titulo + " " + strconv.FormatUint(total, 10) + "\n"
 				for contador < total {
 					titulo2 = titulo + "_" + strconv.FormatUint(contador+1, 10)
+					if paraMandar[k] == 2 {
+						paraLogear += titulo2 + " " + yo + "\n"
+						contador++
+						k = (k + 1) % uint64(len(paraMandar))
+						continue
+					}
 					data, err = os.Open(titulo2)
 					if err != nil {
 						log.Fatalf("Error al leer archivo: %s", err.Error())
 					}
-					defer data.Close()
 					buf = make([]byte, 250*1000)
 					n, _ = data.Read(buf)
 					respuesta, err := (*clientes)[paraMandar[k]].SubirArchivo(context.Background(), &com_datanode.Chunk{
 						Data:   buf[:n],
 						Nombre: titulo2,
 					})
+					data.Close()
 					if err != nil {
 						log.Printf("%s FRACASADO por nodo %s", vecinos[paraMandar[k]])
 					} else if !respuesta.Estado {
 						log.Printf("%s FRACASADO por nodo %s. Motivo: %s", vecinos[paraMandar[k]], respuesta.Msg)
 					} else {
 						log.Printf("%s RECIBIDO con exito por nodo %s", vecinos[paraMandar[k]])
+						err = os.Remove(titulo2)
+						if err != nil {
+							log.Printf("No se pudo eliminar %s", titulo2)
+						}
 					}
 					paraLogear += titulo2 + " " + vecinos[paraMandar[k]] + "\n"
 					contador++
@@ -197,7 +208,7 @@ func main() {
 
 			}
 		}
-	}(vecinos, &clientes, &clienteNamenode)
+	}(vecinos, &clientes, &clienteNamenode, yo)
 	//
 	// data, err := os.Open(yo + ".txt")
 	// if err != nil {
