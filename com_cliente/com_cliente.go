@@ -5,13 +5,19 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"sync"
+
+	"../estructuras"
 )
 
+//ServerCliente elemento que represetará el servidor
 type ServerCliente struct {
 	placeholder int
 }
 
+//SubirLibro función que maneja la subida de libros
 func (c *ServerCliente) SubirLibro(ctx context.Context, in *Libro) (*EstadoSubida, error) {
+	var candado sync.Mutex
 	val := strconv.FormatUint(in.GetChunkActual(), 10)
 	f, err := os.OpenFile(in.GetTitulo()+"_"+val, os.O_WRONLY|os.O_CREATE, 0755)
 	if err != nil {
@@ -31,12 +37,24 @@ func (c *ServerCliente) SubirLibro(ctx context.Context, in *Libro) (*EstadoSubid
 		}, nil
 	}
 
+	candado.Lock()
+	if _, ok := estructuras.AlmacenLibros[in.GetTitulo()]; ok {
+		estructuras.AlmacenLibros[in.GetTitulo()].ChunksRecibidos++
+	} else {
+		estructuras.AlmacenLibros[in.GetTitulo()] = new(estructuras.LibrosGuardados)
+		estructuras.AlmacenLibros[in.GetTitulo()].Titulo = in.GetTitulo()
+		estructuras.AlmacenLibros[in.GetTitulo()].ChunksTotales = in.GetTotalChunks()
+		estructuras.AlmacenLibros[in.GetTitulo()].ChunksRecibidos = 1
+		estructuras.AlmacenLibros[in.GetTitulo()].Repartido = false
+	}
+	candado.Unlock()
 	return &EstadoSubida{
 		Estado: true,
 		Msg:    "",
 	}, nil
 }
 
+//PedirChunk solicita los chunks a los datanodes
 func (c *ServerCliente) PedirChunk(ctx context.Context, in *SolicitudChunk) (*Chunk, error) {
 	val := strconv.FormatUint(in.GetNChunk(), 10)
 	buf := make([]byte, 250*1000)
