@@ -153,6 +153,7 @@ func main() {
 					} else {
 						paraMandar = append(paraMandar, uint64(i))
 					}
+					i++
 				}
 				var contador uint64
 				var k uint64
