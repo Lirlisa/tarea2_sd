@@ -120,17 +120,13 @@ func main() {
 	}
 
 	var conexionNamenode *grpc.ClientConn
-	go func(conexionNamenode **grpc.ClientConn) {
-		for {
-			*conexionNamenode, err = grpc.Dial("dist45:9000", grpc.WithInsecure())
-			if err != nil {
-				log.Printf("no se pudo conectar con namenode... Reintentando...")
-			} else {
-				log.Printf("Conectado con namenode")
-				break
-			}
-		}
-	}(&conexionNamenode)
+
+	conexionNamenode, err = grpc.Dial("dist45:9000", grpc.WithInsecure())
+	if err != nil {
+		log.Printf("no se pudo conectar con namenode... Reintentando...")
+	} else {
+		log.Printf("Conectado con namenode")
+	}
 	clienteNamenode := com_namenode.NewInteraccionesClient(conexionNamenode)
 
 	go func(vecinos *[2]string, clientes *[]com_datanode.InteraccionesClient, clienteNamenode *com_namenode.InteraccionesClient) {
