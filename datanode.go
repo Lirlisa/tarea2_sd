@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"context"
+	"fmt"
 	"log"
 	"net"
 	"os"
@@ -133,7 +134,8 @@ func main() {
 	}(&conexionNamenode)
 	clienteNamenode := com_namenode.NewInteraccionesClient(conexionNamenode)
 
-	go func(vecinos *[2]string, clientes *[](com_datanode.InteraccionesClient), clienteNamenode *com_namenode.InteraccionesClient) {
+	go func(vecinos *[2]string, clientes *[]com_datanode.InteraccionesClient, clienteNamenode *com_namenode.InteraccionesClient) {
+		fmt.Println(*clientes)
 		for {
 			if len(estructuras.ColaParaEnvios) > 0 {
 				elem := estructuras.Pop(&estructuras.ColaParaEnvios)
