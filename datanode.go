@@ -82,6 +82,7 @@ func main() {
 					activos[i] = false
 				} else {
 					activos[i] = true
+					log.Printf("Conectado con %s", vecinos[i])
 					defer conexiones[i].Close()
 				}
 			}
@@ -93,37 +94,37 @@ func main() {
 		}
 	}(conexiones, activos, vecinos, canalVecinos)
 
-	var clientes [2](com_datanode.InteraccionesClient) //clientes grpc
-	data, err := os.Open(yo + ".txt")
-	if err != nil {
-		log.Fatalf("Error al leer archivo: %s", err.Error())
-	}
-	defer data.Close()
-	buf := make([]byte, 250*1000)
-	//generar clientes grpc
-	var contador, i int
-	for {
-		var enviado [2]bool
-		if activos[i] && !enviado[i] {
-			clientes[i] = com_datanode.NewInteraccionesClient(conexiones[i])
-			n, err := data.Read(buf)
-			respuesta, err := clientes[i].SubirArchivo(context.Background(), &com_datanode.Chunk{
-				Nombre: yo + ".txt",
-				Data:   buf[:n],
-			})
-			if err != nil {
-				log.Panicf("Ha ocurrido un error: %s", err.Error())
-			}
-			log.Printf("Estado de envío: %s", respuesta.Estado)
-			contador++
-		}
-		if contador == 2 {
-			*canalVecinos = true
-			ser.GracefulStop()
-			break
-		}
-		i = (i + 1) % 2
-	}
+	// var clientes [2](com_datanode.InteraccionesClient) //clientes grpc
+	// data, err := os.Open(yo + ".txt")
+	// if err != nil {
+	// 	log.Fatalf("Error al leer archivo: %s", err.Error())
+	// }
+	// defer data.Close()
+	// buf := make([]byte, 250*1000)
+	// //generar clientes grpc
+	// var contador, i int
+	// for {
+	// 	var enviado [2]bool
+	// 	if activos[i] && !enviado[i] {
+	// 		clientes[i] = com_datanode.NewInteraccionesClient(conexiones[i])
+	// 		n, err := data.Read(buf)
+	// 		respuesta, err := clientes[i].SubirArchivo(context.Background(), &com_datanode.Chunk{
+	// 			Nombre: yo + ".txt",
+	// 			Data:   buf[:n],
+	// 		})
+	// 		if err != nil {
+	// 			log.Panicf("Ha ocurrido un error: %s", err.Error())
+	// 		}
+	// 		log.Printf("Estado de envío: %s", respuesta.Estado)
+	// 		contador++
+	// 	}
+	// 	if contador == 2 {
+	// 		*canalVecinos = true
+	// 		ser.GracefulStop()
+	// 		break
+	// 	}
+	// 	i = (i + 1) % 2
+	// }
 
 	wait.Wait()
 }
