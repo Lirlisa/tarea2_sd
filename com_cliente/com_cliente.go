@@ -22,7 +22,7 @@ func (c *ServerCliente) SubirLibro(ctx context.Context, in *Libro) (*EstadoSubid
 		}, nil
 	}
 	defer f.Close()
-
+	log.Println("xd")
 	_, err = f.Write(in.GetChunk())
 	if err != nil {
 		log.Printf("Se recibió: %s", in.GetData())
