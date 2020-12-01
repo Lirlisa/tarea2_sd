@@ -143,7 +143,8 @@ func main() {
 				titulo := libro.Titulo
 				paraMandar := make([]uint64, 0)
 				var i int
-				for uint64(i) < total {
+				var contador uint64
+				for contador < total {
 					ctx, _ := context.WithTimeout(context.Background(), 2*time.Second)
 					respuesta, err := (*clientes)[i].Disponible(ctx, &com_datanode.Empty{})
 					if err != nil {
@@ -153,9 +154,10 @@ func main() {
 					} else {
 						paraMandar = append(paraMandar, uint64(i))
 					}
-					i++
+					i = (i + 1) % 2
+					contador++
 				}
-				var contador uint64
+				contador = 0
 				var k uint64
 				var buf []byte
 				var data *os.File
