@@ -9,6 +9,7 @@ import (
 	"sync"
 	"time"
 
+	"./com_cliente"
 	"./com_datanode"
 	"google.golang.org/grpc"
 )
@@ -42,11 +43,24 @@ func initServer(listener net.Listener, canal chan *grpc.Server) {
 func main() {
 	var wait sync.WaitGroup
 
-	//iniciar servidor
+	//iniciar servidor datanodes
 	listener, err := net.Listen("tcp", ":9000")
 	if err != nil {
 		log.Fatalf("Se ha producido un error al iniciar el servidor: %s", err.Error())
 	}
+
+	listener_clientes, err := net.Listen("tcp", ":9001")
+	if err != nil {
+		log.Fatalf("Se ha producido un error al iniciar el servidor: %s", err.Error())
+	}
+	go func(listener net.Listener) {
+		servidor := com_cliente.ServerCliente{}
+		grpcServer := grpc.NewServer()
+		com_cliente.RegisterInteraccionesServer(grpcServer, &servidor)
+		if err := grpcServer.Serve(listener); err != nil {
+			log.Printf("Terminada ejecución. Motivo: %s", err.Error())
+		}
+	}(listener_clientes)
 
 	// dejar el servidor grpc en otro hilo
 	canalServer := make(chan *grpc.Server)
