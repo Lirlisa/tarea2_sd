@@ -130,7 +130,6 @@ func main() {
 	clienteNamenode := com_namenode.NewInteraccionesClient(conexionNamenode)
 
 	go func(vecinos *[2]string, clientes *[]com_datanode.InteraccionesClient, clienteNamenode *com_namenode.InteraccionesClient, yo string) {
-		fmt.Println(*clientes)
 		for {
 			if len(estructuras.ColaParaEnvios) > 0 {
 				elem := estructuras.Pop(&estructuras.ColaParaEnvios)
@@ -161,6 +160,7 @@ func main() {
 				var n int
 				var titulo2 string
 				paraLogear := titulo + " " + strconv.FormatUint(total, 10) + "\n"
+				fmt.Println(paraMandar)
 				for contador < total {
 					titulo2 = titulo + "_" + strconv.FormatUint(contador+1, 10)
 					if paraMandar[k] == 2 {
