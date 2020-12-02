@@ -152,9 +152,9 @@ func ClienteDownloader() {
 	}
 
 	//se muestran los libros disponibles
-	var titulos []string = strings.Split(response.Body, " ")
+	//var titulos []string = strings.Split(response.Body, " ")
 	fmt.Println("\nLIBROS DISPONIBLES\n")
-	fmt.Print(response.body)
+	fmt.Print(response.Body)
 
 	//se solicita el ingreso del libro a descargar
 	var libro string

@@ -30,7 +30,7 @@ func ubicaciones(libro string) string {
 	candado.Lock()
 	retorno := estructuras.Locaciones[libro]
 	candado.Unlock()
-	retorno = strings.Trim(retorno, " ")
+	retorno = strings.Trim(retorno, "\n ")
 	trozos := strings.Split(retorno, "\n")
 	trozos = trozos[1:]
 	var paraMandar string
