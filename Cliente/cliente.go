@@ -199,7 +199,7 @@ func ClienteDownloader() {
 		//Peticiones de chunks
 		fmt.Println(ubicacioneslista[d])
 		var conn *grpc.ClientConn
-		conn, err := grpc.Dial(ubicacioneslista[d], grpc.WithInsecure())
+		conn, err := grpc.Dial(ubicacioneslista[d]+":9001", grpc.WithInsecure())
 		if err != nil {
 			log.Fatalf("did not connect: %s", err)
 		}
