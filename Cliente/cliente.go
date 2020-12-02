@@ -147,11 +147,8 @@ func ClienteDownloader() {
 		fmt.Println("\nNO HAY LIBROS DISPONIBLES\n")
 		return
 	}
-	var titulos []string = strings.Split(response.Body, " ")
 	fmt.Println("\nLIBROS DISPONIBLES\n")
-	for t := 0; t < len(titulos); t++ {
-		fmt.Println(titulos[t])
-	}
+	fmt.Print(response.body)
 
 	var libro string
 	fmt.Println("\nIngrese nombre de libro a solicitar(Igual al mostrado anteriormente, sin espacios)")

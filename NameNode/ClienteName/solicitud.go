@@ -1,11 +1,7 @@
 package ClienteName
 
 import (
-	"bufio"
-	"fmt"
 	"log"
-	"os"
-	"strconv"
 	"strings"
 
 	"sync"
@@ -14,9 +10,11 @@ import (
 	"golang.org/x/net/context"
 )
 
+//Server representa al servidor
 type Server struct {
 }
 
+//SolicitudCliente procesa las solucitudes de los clientes
 func (s *Server) SolicitudCliente(ctx context.Context, in *Message) (*Message, error) {
 	mensaje := in.Body
 	if mensaje == "" {
@@ -32,44 +30,25 @@ func ubicaciones(libro string) string {
 	candado.Lock()
 	retorno := estructuras.Locaciones[libro]
 	candado.Unlock()
-	return retorno
+	retorno = strings.Trim(retorno, " ")
+	trozos := strings.Split(retorno, "\n")
+	trozos = trozos[1:]
+	var paraMandar string
+	var aux []string
+	for _, k := range trozos {
+		aux = strings.Split(k, " ")
+		ParaMandar += aux[1] + " "
+	}
+	return strings.Trim(ParaMandar, " ")
 }
 
 func titulos() string {
-	archivo, err := os.Open("./LOG.txt")
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+	var retorno string
+	var candado sync.Mutex
+	candado.Lock()
+	for k := range estructuras.Locaciones {
+		retorno += k + "\n"
 	}
-
-	partes := 0
-	i := 1
-	datos := ""
-	scanner := bufio.NewScanner(archivo)
-	for scanner.Scan() {
-		linea := scanner.Text()
-
-		if partes != 0 {
-			if i < partes {
-				i = i + 1
-				continue
-			} else if i == partes {
-				i = 1
-				partes = 0
-				continue
-			}
-
-		}
-
-		var linealista []string = strings.Split(linea, " ")
-		partes, err = strconv.Atoi(linealista[1])
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-
-		datos = datos + linealista[0] + " "
-	}
-
-	return strings.TrimSpace(datos)
+	candado.Unlock()
+	return retorno
 }
