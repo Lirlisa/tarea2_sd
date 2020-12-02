@@ -114,10 +114,11 @@ func ClienteUploader() {
 			ChunkActual: i + 1,
 			Chunk:       partBuffer})
 		if err != nil {
-			log.Fatalf("Error al subir chunk: %s", err)
-		}
-		if respuesta.Estado == false {
-			log.Fatalf("Error al subir chunk: %s", respuesta.Msg)
+			log.Fatalf("No se pudo envíar chunk: %s", err)
+		} else if respuesta.Estado == false {
+			log.Fatalf("Error externo al subir chunk: %s", respuesta.Msg)
+		} else {
+			log.Printf("Chunk entregado con éxito")
 		}
 
 	}
