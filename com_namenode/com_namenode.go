@@ -29,3 +29,8 @@ func (c *ServerNamenode) EscribirLog(ctx context.Context, in *Log) (*EstadoEscri
 		}, nil
 	}
 }
+
+// //Request función para hacer request al namenode
+// func (c *ServerNamenode) Request(ctx context.Context, in *Id) (*Disponibilidad, error) {
+
+// }

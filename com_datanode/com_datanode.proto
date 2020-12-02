@@ -17,10 +17,16 @@ message EstadoSubida{
     bool Estado = 1;
     string Msg = 2;
 }
+
 message Empty{
+}
+
+message Id{
+    string Id = 1;
 }
 
 service Interacciones {
     rpc Disponible (Empty) returns (Disponibilidad);
     rpc SubirArchivo (Chunk) returns (EstadoSubida);
+    rpc Request (Id) returns (Disponibilidad);
 }

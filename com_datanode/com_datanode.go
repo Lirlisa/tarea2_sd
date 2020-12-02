@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 
+	"../estructuras"
 	"golang.org/x/net/context"
 )
 
@@ -20,7 +21,7 @@ func (s *ServerDatanode) Disponible(ctx context.Context, in *Empty) (*Disponibil
 }
 
 //SubirArchivo le manda un archivo a los otros datanodes
-func (c *ServerDatanode) SubirArchivo(ctx context.Context, in *Chunk) (*EstadoSubida, error) {
+func (s *ServerDatanode) SubirArchivo(ctx context.Context, in *Chunk) (*EstadoSubida, error) {
 	f, err := os.OpenFile(in.GetNombre(), os.O_WRONLY|os.O_CREATE, 0755)
 	if err != nil {
 		log.Printf("No se pude crear chunk: %s", err.Error())
@@ -43,5 +44,18 @@ func (c *ServerDatanode) SubirArchivo(ctx context.Context, in *Chunk) (*EstadoSu
 	return &EstadoSubida{
 		Estado: true,
 		Msg:    "",
+	}, nil
+}
+
+//Request para solicitar acceso al log
+func (s *ServerDatanode) Request(ctx context.Context, in *Id) (*Disponibilidad, error) {
+	//las id más pequeñas tienen prioridad
+	if !estructuras.Ocupado || in.GetId() < estructuras.MiID {
+		return &Disponibilidad{
+			Estado: true,
+		}, nil
+	}
+	return &Disponibilidad{
+		Estado: false,
 	}, nil
 }

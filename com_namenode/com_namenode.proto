@@ -14,6 +14,15 @@ message EstadoEscritura {
     string Msg = 2;
 }
 
+message Disponibilidad {
+    bool Disponible = 1;
+}
+
+message Id {
+    string Id = 1;
+}
+
 service Interacciones {
     rpc EscribirLog (Log) returns (EstadoEscritura);
+    rpc Request (Id) returns (Disponibilidad);
 }

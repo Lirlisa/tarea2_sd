@@ -37,3 +37,9 @@ func Pop(q *[]string) string {
 
 //ColaParaEnvios Cuando un libro esté listo para repartir, su titulo se agregará acá
 var ColaParaEnvios []string = make([]string, 0)
+
+//Ocupado para saber si este nodo está intentando escribir el log
+var Ocupado bool = false
+
+//MiID para guardar la id del noso
+var MiID string = ""

@@ -77,7 +77,8 @@ func main() {
 
 	time.Sleep(time.Second) //pausa para darle tiempo a los resagados
 
-	yo := obtenerVecinos("yo.txt")[0]           //nombre de este nodo
+	yo := obtenerVecinos("yo.txt")[0] //nombre de este nodo
+	estructuras.MiID = yo
 	vecinos := obtenerVecinos("vecinos.txt")    //nombres de los vecinos (dist45, dist46, etc.)
 	conexiones := make([](*grpc.ClientConn), 2) //las conexioenes con cada vecino en el mismo orden del arreglo vecinos
 	activos := make([]bool, 2)                  //para llevar cuenta de lso vecinos activos
@@ -190,6 +191,49 @@ func main() {
 					contador++
 					k = (k + 1) % uint64(len(paraMandar))
 				}
+				var aprobados [2]bool
+				var cantAprobados int
+				var intentosFallidos [2]int
+				timeout := 10
+				for cantAprobados < 2 {
+					for p := range aprobados {
+						if !aprobados[p] {
+							ctx, _ := context.WithTimeout(context.Background(), time.Duration(timeout)*time.Second)
+							res, err := (*clientes)[p].Request(ctx, &com_datanode.Id{
+								Id: yo,
+							})
+							if err != nil {
+								if intentosFallidos[p] > 3 {
+									log.Printf("Nodo %s parece caido, así que se obviara su permiso", vecinos[p])
+									aprobados[p] = true
+									cantAprobados++
+								} else {
+									log.Printf("Request fallido a %s, intentando de nuevo.", vecinos[p])
+									intentosFallidos[p]++
+								}
+							} else if !res.Estado {
+								log.Printf("Nodo %s ocupado, intentando otra vez.", vecinos[p])
+							} else {
+								aprobados[p] = true
+								cantAprobados++
+							}
+						}
+					}
+				}
+				for {
+					res, err := (*clienteNamenode).Request(context.Background(), &com_namenode.Id{
+						Id: yo,
+					})
+					if err != nil {
+						log.Printf("No se pudo obtener permiso del namenode, intentando otra vez")
+					} else if !res.Disponible {
+						log.Printf("Aún no se puede escribir el log, intentando otra vez")
+					} else {
+						break
+					}
+				}
+
+				estructuras.Ocupado = true
 				res, err := (*clienteNamenode).EscribirLog(context.Background(), &com_namenode.Log{
 					Titulo: titulo,
 					Texto:  paraLogear,
@@ -201,7 +245,7 @@ func main() {
 				} else {
 					log.Printf("Escrito en log con éxito")
 				}
-
+				estructuras.Ocupado = false
 			}
 		}
 	}(vecinos, &clientes, &clienteNamenode, yo)
