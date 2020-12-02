@@ -37,6 +37,9 @@ func ubicaciones(libro string) string {
 	scanner := bufio.NewScanner(archivo)
 	for scanner.Scan() {
 		linea := scanner.Text()
+		if len(linea < 1) {
+			continue
+		}
 
 		if partes != 0 {
 			if i < partes {
