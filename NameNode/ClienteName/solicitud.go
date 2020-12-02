@@ -34,9 +34,9 @@ func ubicaciones(libro string) string {
 	trozos := strings.Split(retorno, "\n")
 	trozos = trozos[1:]
 	var paraMandar string
-	var aux []string
+	var aux *[]string
 	for _, k := range trozos {
-		aux = strings.Split(k, " ")
+		*aux = strings.Split(k, " ")
 		paraMandar += aux[1] + " "
 	}
 	return strings.Trim(paraMandar, " ")
