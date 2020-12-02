@@ -234,16 +234,19 @@ func main() {
 				}
 
 				estructuras.Ocupado = true
-				res, err := (*clienteNamenode).EscribirLog(context.Background(), &com_namenode.Log{
-					Titulo: titulo,
-					Texto:  paraLogear,
-				})
-				if err != nil {
-					log.Printf("No se pudo escribir en log")
-				} else if !res.Estado {
-					log.Printf("No se pudo escribir en log debido a %s", res.Msg)
-				} else {
-					log.Printf("Escrito en log con éxito")
+				for {
+					res, err := (*clienteNamenode).EscribirLog(context.Background(), &com_namenode.Log{
+						Titulo: titulo,
+						Texto:  paraLogear,
+					})
+					if err != nil {
+						log.Printf("No se pudo escribir en log, intentando otra vez")
+					} else if !res.Estado {
+						log.Printf("No se pudo escribir en log debido a %s, intentanod otra ve", res.Msg)
+					} else {
+						log.Printf("Escrito en log con éxito")
+						break
+					}
 				}
 				estructuras.Ocupado = false
 			}
