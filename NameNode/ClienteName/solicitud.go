@@ -8,6 +8,9 @@ import (
 	"strconv"
 	"strings"
 
+	"sync"
+
+	"../../estructuras"
 	"golang.org/x/net/context"
 )
 
@@ -25,59 +28,11 @@ func (s *Server) SolicitudCliente(ctx context.Context, in *Message) (*Message, e
 }
 
 func ubicaciones(libro string) string {
-	archivo, err := os.Open("./LOG.txt")
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-
-	partes := 0
-	i := 1
-	datos := ""
-	scanner := bufio.NewScanner(archivo)
-	for scanner.Scan() {
-		linea := scanner.Text()
-		if len(linea) < 1 {
-			continue
-		}
-
-		if partes != 0 {
-			if i < partes {
-				datos = datos + linea + " "
-				i = i + 1
-				continue
-			} else if i == partes {
-				datos = datos + linea
-				i = i + 1
-				break
-			}
-
-		}
-		if strings.HasPrefix(linea, libro+" ") {
-			partes, err = strconv.Atoi(strings.TrimLeft(linea, libro+" "))
-			if err != nil {
-				fmt.Println(err)
-				os.Exit(1)
-			}
-			continue
-
-		}
-
-	}
-	var datoslista []string = strings.Split(datos, " ")
-	respuesta := ""
-	if partes != 0 {
-		for i = 1; i <= partes; i++ {
-			aux := strconv.Itoa(i)
-			for j := 0; j < len(datoslista); j++ {
-				if aux == datoslista[j] {
-					respuesta = respuesta + datoslista[j+1] + " "
-					break
-				}
-			}
-		}
-	}
-	return strings.TrimSpace(respuesta)
+	var candado sync.Mutex
+	candado.Lock()
+	retorno := estructuras.Locaciones[libro]
+	candado.Unlock()
+	return retorno
 }
 
 func titulos() string {
