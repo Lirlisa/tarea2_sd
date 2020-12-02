@@ -9,10 +9,12 @@ import (
 	"../../estructuras"
 )
 
+//ServerNamenode representa al servidor
 type ServerNamenode struct {
 	placeholder int
 }
 
+//EscribirLog se encarga de escribir en el archivo LOG lo enviado por DataNode
 func (c *ServerNamenode) EscribirLog(ctx context.Context, in *Log) (*EstadoEscritura, error) {
 	var candado sync.Mutex
 	f, err := os.OpenFile("LOG.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
