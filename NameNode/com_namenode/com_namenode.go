@@ -9,20 +9,12 @@ import (
 	"../../estructuras"
 )
 
-<<<<<<< HEAD
-//ServerNamenode estructura para crear el servidor
-=======
 //ServerNamenode representa al servidor
->>>>>>> 3aa5b661f23763afabec260f091368e5cf0419ed
 type ServerNamenode struct {
 	placeholder int
 }
 
-<<<<<<< HEAD
-//EscribirLog para escribir en el log
-=======
 //EscribirLog se encarga de escribir en el archivo LOG lo enviado por DataNode
->>>>>>> 3aa5b661f23763afabec260f091368e5cf0419ed
 func (c *ServerNamenode) EscribirLog(ctx context.Context, in *Log) (*EstadoEscritura, error) {
 	var candado sync.Mutex
 	candado.Lock()
