@@ -155,7 +155,7 @@ func ClienteDownloader() {
 	var libro string
 	fmt.Println("\nIngrese nombre de libro a solicitar(Igual al mostrado anteriormente, sin espacios)")
 	fmt.Scanln(&libro)
-
+	libro = strings.TrimSpace(libro)
 	//solicitar ubicaciones
 	response, err = c.SolicitudCliente(context.Background(), &ClienteName.Message{Body: libro})
 	if err != nil {
