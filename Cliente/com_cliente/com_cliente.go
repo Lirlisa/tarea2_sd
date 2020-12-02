@@ -7,10 +7,12 @@ import (
 	"strconv"
 )
 
+//ServerCliente representa al servidor
 type ServerCliente struct {
 	placeholder int
 }
 
+//Subir libro se encarga de recibir los chunks de cliente y almacenarlos en el datanode
 func (c *ServerCliente) SubirLibro(ctx context.Context, in *Libro) (*EstadoSubida, error) {
 	val := strconv.FormatUint(in.GetChunkActual(), 10)
 	f, err := os.OpenFile(in.GetTitulo()+"_"+val, os.O_WRONLY|os.O_CREATE, 0755)
@@ -37,6 +39,7 @@ func (c *ServerCliente) SubirLibro(ctx context.Context, in *Libro) (*EstadoSubid
 	}, nil
 }
 
+//PedirChunk se encarga de enviar chunk al cliente de acuerdo al que es solicitado
 func (c *ServerCliente) PedirChunk(ctx context.Context, in *SolicitudChunk) (*Chunk, error) {
 	val := strconv.FormatUint(in.GetNChunk(), 10)
 	buf := make([]byte, 250*1000)
