@@ -191,7 +191,8 @@ func main() {
 					k = (k + 1) % uint64(len(paraMandar))
 				}
 				res, err := (*clienteNamenode).EscribirLog(context.Background(), &com_namenode.Log{
-					Texto: paraLogear,
+					Titulo: titulo,
+					Texto:  paraLogear,
 				})
 				if err != nil {
 					log.Printf("No se pudo escribir en log")

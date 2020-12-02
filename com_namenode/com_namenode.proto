@@ -5,7 +5,8 @@ package com_namenode;
 option go_package = ".;com_namenode";
 
 message Log{
-    string Texto = 1;
+    string Titulo = 1;
+    string Texto = 2;
 }
 
 message EstadoEscritura {
