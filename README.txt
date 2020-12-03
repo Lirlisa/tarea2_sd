@@ -14,6 +14,9 @@ finalemente el cliente, el cual puede ser activado las veces que se requieran.
 Namenode:
 El namenode se encuentra $HOME/tarea2_sd/Namenode, una vez ahí se puede ejecutar con el comando 'make run'.
 El log queda almacenado en el archivo 'LOG.txt'
+Se modificó ligeramnete la estructura del log quedando:
+<nombre libro> <Cantidad de chunks>
+<nombre libro>_<número chunk> <ip maquina>
 
 Datanode:
 El datanode se encuentra en $HOME/tarea2_sd/, una vez ahí se puede ejecutar con el comando 'make run'.
@@ -24,5 +27,12 @@ El cliente se encuentra en $HOME/tarea2_sd/Cliente, una vez ahí se puede ejecut
 Para subir archivos, se debe entregar el nombre exacto del archivo pdf con su extensión, hay archivos ya cargados
 para probar. Al elegir el modo descarga, se debe escribir el string exacto que se presenta por consola para hacer
 la solicitud correctamente, luego el archivo descargado tendrá la forma 'Descarga<nombre del libro>.pdf'
+
+Los archivos diponibles para prueba son:
+- PeterPan.pdf
+- Mujercitas.pdf
+- Ivanhoe.pdf
+- Dracula.pdf
+- CuentodeNavidad.pdf
 
 Sólo la parte distribuida fue implementada.
