@@ -129,7 +129,7 @@ func main() {
 	}
 	clienteNamenode := com_namenode.NewInteraccionesClient(conexionNamenode)
 
-	go func(vecinos *[2]string, clientes *[]com_datanode.InteraccionesClient, clienteNamenode *com_namenode.InteraccionesClient, yo string) {
+	go func(vecinos *[2]string, clientes *[]com_datanode.InteraccionesClient, clienteNamenode *com_namenode.InteraccionesClient, yo string, activos *[]bool) {
 		for {
 			if len(estructuras.ColaParaEnvios) > 0 {
 				elem := estructuras.Pop(&estructuras.ColaParaEnvios)
@@ -207,6 +207,7 @@ func main() {
 									log.Printf("Nodo %s parece caido, así que se obviara su permiso", vecinos[p])
 									aprobados[p] = true
 									cantAprobados++
+									(*activos)[p] = false
 								} else {
 									log.Printf("Request fallido a %s, intentando de nuevo.", vecinos[p])
 									intentosFallidos[p]++
@@ -251,7 +252,7 @@ func main() {
 				estructuras.Ocupado = false
 			}
 		}
-	}(vecinos, &clientes, &clienteNamenode, yo)
+	}(vecinos, &clientes, &clienteNamenode, yo, &activos)
 	//
 	// data, err := os.Open(yo + ".txt")
 	// if err != nil {
