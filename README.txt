@@ -36,3 +36,5 @@ Los archivos diponibles para prueba son:
 - CuentodeNavidad.pdf
 
 Sólo la parte distribuida fue implementada.
+
+INFORME: El informe se encuentra en $HOME/tarea2_sd/ y el archivo corresponde a INFLAB2SD.pdf
