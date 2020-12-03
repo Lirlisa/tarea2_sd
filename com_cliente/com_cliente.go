@@ -28,7 +28,6 @@ func (c *ServerCliente) SubirLibro(ctx context.Context, in *Libro) (*EstadoSubid
 		}, nil
 	}
 	defer f.Close()
-	log.Println("xd")
 	_, err = f.Write(in.GetChunk())
 	if err != nil {
 		return &EstadoSubida{
@@ -51,6 +50,7 @@ func (c *ServerCliente) SubirLibro(ctx context.Context, in *Libro) (*EstadoSubid
 		estructuras.AlmacenLibros[in.GetTitulo()].Repartido = false
 	}
 	candado.Unlock()
+	log.Printf("Creado chunk de %s", in.GetTitulo())
 	return &EstadoSubida{
 		Estado: true,
 		Msg:    "",
