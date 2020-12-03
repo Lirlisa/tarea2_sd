@@ -17,7 +17,8 @@ El log queda almacenado en el archivo 'LOG.txt'
 
 Datanode:
 El datanode se encuentra en $HOME/tarea2_sd/, una vez ahí se puede ejecutar con el comando 'make run'.
-Al recibir chunks, estos se almacenarán con el nombre '<nombre libro>_<número chunk>', sin extensión
+Al recibir chunks, estos se almacenarán con el nombre '<nombre libro>_<número chunk>', sin extensión.
+Hay 2 archivos auxiliares que son para obtener los nombres de los nodos, no deberían tocarse
 
 Cliente:
 El cliente se encuentra en $HOME/tarea2_sd/Cliente, una vez ahí se puede ejecutar con el comando 'make run'.
