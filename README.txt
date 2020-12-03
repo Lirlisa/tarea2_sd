@@ -9,12 +9,12 @@ Máquina 3 (dist46): datanode
 Máquina 4 (dist48): datanode
 
 Para el correcto funcionamiento del sistema, namenode debe ser el primero en activarse, luego los datanodes y
-finalemente el cliente, el cual puede ser activado las veces que se requieran.
+finalmente el cliente, el cual puede ser activado las veces que se requieran.
 
 Namenode:
 El namenode se encuentra $HOME/tarea2_sd/Namenode, una vez ahí se puede ejecutar con el comando 'make run'.
 El log queda almacenado en el archivo 'LOG.txt'
-Se modificó ligeramnete la estructura del log quedando:
+Se modificó ligeramente la estructura del log quedando:
 <nombre libro> <Cantidad de chunks>
 <nombre libro>_<número chunk> <ip maquina>
 
